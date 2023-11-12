@@ -1,0 +1,23 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-cramforinterview-dev-182025-authRole",
+      "UnauthRoleArn": "arn:aws:iam::930315061746:role/amplify-cramforinterview-dev-182025-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::930315061746:role/amplify-cramforinterview-dev-182025-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-cramforinterview-dev-182025-deployment",
+      "UnauthRoleName": "amplify-cramforinterview-dev-182025-unauthRole",
+      "StackName": "amplify-cramforinterview-dev-182025",
+      "StackId": "arn:aws:cloudformation:us-east-1:930315061746:stack/amplify-cramforinterview-dev-182025/9bbe2f70-7a32-11ee-8718-0a2f4de1b8e9",
+      "AmplifyAppId": "d9tlskwlali55"
+    },
+    "categories": {
+      "api": {
+        "cramforinterview": {}
+      },
+      "auth": {
+        "cramforinterview4115e197": {}
+      }
+    }
+  }
+}
