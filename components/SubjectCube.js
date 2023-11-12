@@ -75,7 +75,7 @@ export default function SubjectCube(props) {
           renderItem={subjectCube}
           data={subjectAry}
           numColumns={2}
-          keyExtractor={(item, _) => item.subject}
+          keyExtractor={(item) => item.subject}
         />
       )}
     </View>
@@ -89,13 +89,13 @@ const styles = StyleSheet.create({
     width: Dimensions.get('window').width / 2.4,
     borderRadius: 10,
     overflow: 'hidden',
+    backgroundColor: '#C4E1E1',
   },
   bgImg: {
     flex: 1,
     justifyContent: 'flex-end',
   },
   itemShow: {
-    justifyContent: 'flex-end',
     padding: 0,
     width: '100%',
     height: '100%',
@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
   cubeTitleFont: {
     textAlign: 'center',
     fontSize: 20,
-    color: 'yellow',
+    color: '#F9F900',
     backgroundColor: 'rgba(0,0,0,0.5)',
   },
 })
