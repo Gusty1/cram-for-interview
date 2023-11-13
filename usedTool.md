@@ -1,6 +1,4 @@
-# 使用的工具
-
----
+# 用過的工具
 
 ## sqlLite
 
@@ -224,7 +222,7 @@ async function fetchSubjects() {
 金鑰會過期，過期的話會出現 401 錯誤，
 檢查或修改期限請至 amplify console->API->在 AppSync 中檢視->Settings
 
-### 權限設定(不會用)
+#### 權限設定(不會用)
 
 一個有關身分驗證的東西，用這個就會在你程式啟動的時候跳一個登入畫面，但登入後就會有一些什麼權限問題，SO 不懂暫時跳過。
 使用者相關的東西可以去 amplify console 看。
@@ -236,5 +234,3 @@ import { withAuthenticator } from 'aws-amplify-react-native'
 withAuthenticator(function App() {...})
 
 ```
-
----
