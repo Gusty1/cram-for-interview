@@ -119,9 +119,9 @@ export const deleteFavoriteById = (questionId) => {
 schema.graphql 應該會有一個預設的 todo model，要自己新增就參考那個 todo，自己建一個新的 model。
 
 ```javascript
-//建一個名為Subject的model。一張表好像最少要有 2 個!，一個是主鍵，另一個是什麼 index
+//建一個名為Subject的model。一張最少要有一個 !，我想這個!應該是代表主鍵或not null的意思。
 type Subject @model {
-id: ID! //!應該是代表 not null，ID 可以不管就這樣寫就好
+id: ID! //反正ID 可以不管就這樣寫就好
 name: String!
 chineseName: String
 }
