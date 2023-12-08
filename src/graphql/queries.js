@@ -6,17 +6,17 @@ export const getSubject = /* GraphQL */ `
     getSubject(id: $id) {
       id
       subject
-      chineseName
+      subject_zh
+      show
       createDate
       updateDate
-      isShow
       remark
       createdAt
       updatedAt
       __typename
     }
   }
-`;
+`
 export const listSubjects = /* GraphQL */ `
   query ListSubjects(
     $filter: ModelSubjectFilterInput
@@ -27,10 +27,10 @@ export const listSubjects = /* GraphQL */ `
       items {
         id
         subject
-        chineseName
+        subject_zh
+        show
         createDate
         updateDate
-        isShow
         remark
         createdAt
         updatedAt
@@ -40,23 +40,24 @@ export const listSubjects = /* GraphQL */ `
       __typename
     }
   }
-`;
+`
 export const getSubtitle = /* GraphQL */ `
   query GetSubtitle($id: ID!) {
     getSubtitle(id: $id) {
       id
       subject
       subtitle
+      count
+      show
       createDate
       updateDate
-      isShow
       remark
       createdAt
       updatedAt
       __typename
     }
   }
-`;
+`
 export const listSubtitles = /* GraphQL */ `
   query ListSubtitles(
     $filter: ModelSubtitleFilterInput
@@ -68,9 +69,10 @@ export const listSubtitles = /* GraphQL */ `
         id
         subject
         subtitle
+        count
+        show
         createDate
         updateDate
-        isShow
         remark
         createdAt
         updatedAt
@@ -80,26 +82,26 @@ export const listSubtitles = /* GraphQL */ `
       __typename
     }
   }
-`;
+`
 export const getQuestion = /* GraphQL */ `
   query GetQuestion($id: ID!) {
     getQuestion(id: $id) {
       id
-      subject
       subtitle
       question
       answer
-      clickCount
+      count
+      show
+      order
       createDate
       updateDate
-      isShow
       remark
       createdAt
       updatedAt
       __typename
     }
   }
-`;
+`
 export const listQuestions = /* GraphQL */ `
   query ListQuestions(
     $filter: ModelQuestionFilterInput
@@ -109,14 +111,14 @@ export const listQuestions = /* GraphQL */ `
     listQuestions(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
         id
-        subject
         subtitle
         question
         answer
-        clickCount
+        count
+        show
+        order
         createDate
         updateDate
-        isShow
         remark
         createdAt
         updatedAt
@@ -126,41 +128,41 @@ export const listQuestions = /* GraphQL */ `
       __typename
     }
   }
-`;
-export const getQuestionReport = /* GraphQL */ `
-  query GetQuestionReport($id: ID!) {
-    getQuestionReport(id: $id) {
+`
+export const getReport = /* GraphQL */ `
+  query GetReport($id: ID!) {
+    getReport(id: $id) {
       id
       questionId
-      question
       errorMsg
+      state
+      result
+      reason
       createDate
       updateDate
-      checkResult
-      failReason
       remark
       createdAt
       updatedAt
       __typename
     }
   }
-`;
-export const listQuestionReports = /* GraphQL */ `
-  query ListQuestionReports(
-    $filter: ModelQuestionReportFilterInput
+`
+export const listReports = /* GraphQL */ `
+  query ListReports(
+    $filter: ModelReportFilterInput
     $limit: Int
     $nextToken: String
   ) {
-    listQuestionReports(filter: $filter, limit: $limit, nextToken: $nextToken) {
+    listReports(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
         id
         questionId
-        question
         errorMsg
+        state
+        result
+        reason
         createDate
         updateDate
-        checkResult
-        failReason
         remark
         createdAt
         updatedAt
@@ -170,23 +172,24 @@ export const listQuestionReports = /* GraphQL */ `
       __typename
     }
   }
-`;
+`
 export const getOpinion = /* GraphQL */ `
   query GetOpinion($id: ID!) {
     getOpinion(id: $id) {
       id
       opinion
-      checkResult
+      state
+      result
+      reason
       createDate
       updateDate
-      failReason
       remark
       createdAt
       updatedAt
       __typename
     }
   }
-`;
+`
 export const listOpinions = /* GraphQL */ `
   query ListOpinions(
     $filter: ModelOpinionFilterInput
@@ -197,10 +200,11 @@ export const listOpinions = /* GraphQL */ `
       items {
         id
         opinion
-        checkResult
+        state
+        result
+        reason
         createDate
         updateDate
-        failReason
         remark
         createdAt
         updatedAt
@@ -210,7 +214,7 @@ export const listOpinions = /* GraphQL */ `
       __typename
     }
   }
-`;
+`
 export const getNewQuestion = /* GraphQL */ `
   query GetNewQuestion($id: ID!) {
     getNewQuestion(id: $id) {
@@ -219,8 +223,9 @@ export const getNewQuestion = /* GraphQL */ `
       subtitle
       question
       answer
-      checkResult
-      failReason
+      state
+      result
+      reason
       createDate
       updateDate
       remark
@@ -229,7 +234,7 @@ export const getNewQuestion = /* GraphQL */ `
       __typename
     }
   }
-`;
+`
 export const listNewQuestions = /* GraphQL */ `
   query ListNewQuestions(
     $filter: ModelNewQuestionFilterInput
@@ -243,8 +248,9 @@ export const listNewQuestions = /* GraphQL */ `
         subtitle
         question
         answer
-        checkResult
-        failReason
+        state
+        result
+        reason
         createDate
         updateDate
         remark
@@ -256,4 +262,4 @@ export const listNewQuestions = /* GraphQL */ `
       __typename
     }
   }
-`;
+`

@@ -7,6 +7,7 @@ import SubjectCube from '../components/SubjectCube'
 import { change } from '../store/slices/favoriteSlices'
 import { fetchFavoriteAll } from '../sqlLite/db'
 import Styles from '../constants/Styles'
+import { errorHandler } from '../tools/OtherTool'
 import { IUDOption } from '../awsDataOption/baseOption'
 
 /*
@@ -16,16 +17,24 @@ export default function HomeScreen(props) {
   const dispatch = useDispatch()
 
   useEffect(() => {
-    // IUDOption().then((data) => {
-    //   console.log(data)
-    // })
+    // IUDOption()
+    //   .then((data) => {
+    //     console.log(data)
+    //   })
+    //   .catch((err) => {
+    //     errorHandler(err)
+    //   })
     async function getFavoriteData() {
-      await fetchFavoriteAll().then((data) => {
-        if (data.rows.length !== 0) {
-          const favAry = data.rows._array.map((item) => item.question)
-          dispatch(change(favAry))
-        }
-      })
+      await fetchFavoriteAll()
+        .then((data) => {
+          if (data.rows.length !== 0) {
+            const favAry = data.rows._array.map((item) => item.questionId)
+            dispatch(change(favAry))
+          }
+        })
+        .catch((err) => {
+          errorHandler(err)
+        })
     }
     getFavoriteData()
   }, [])

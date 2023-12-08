@@ -43,7 +43,7 @@ export default function HeaderNavigator (props) {
         name="SubtitleScreen"
         component={SubtitleScreen}
         options={({ navigation, route }) => {
-          const chineseName = route.params.chineseName
+          const chineseName = route.params.subject_zh
           return {
             title: chineseName,
             headerRight: () => {

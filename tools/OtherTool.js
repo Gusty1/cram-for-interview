@@ -26,3 +26,9 @@ export function randomColor (opacity) {
     return 'rgb(' + color1 + ',' + color2 + ',' + color3 + ')'
   }
 }
+
+//錯誤處理
+export function errorHandler (err) {
+  //console.log(err)
+  alert('發生了點問題!')
+}

@@ -6,6 +6,7 @@ import {
   Image,
   Dimensions,
   View,
+  RefreshControl,
 } from 'react-native'
 import { ListItem } from '@rneui/themed'
 
@@ -15,6 +16,7 @@ import Styles from '../constants/Styles'
 import { API, graphqlOperation } from 'aws-amplify'
 import { listSubtitles, listQuestions } from '../src/graphql/queries'
 import SubtitleImgPath from '../constants/SubtitleImgPath'
+import { errorHandler } from '../tools/OtherTool'
 
 const screenHeight = Dimensions.get('window').height
 
@@ -24,28 +26,34 @@ const screenHeight = Dimensions.get('window').height
 export default function SubtitleList(props) {
   const [listAry, setListAry] = useState(null)
   const subject = props.route.params.subject
+  const [refreshing, setRefreshing] = React.useState(false)
 
+  //載入時查詢副標題
   useEffect(() => {
-    //先查詢副標題有哪些
-    async function fetchSubtitles() {
-      await API.graphql(
-        graphqlOperation(listSubtitles, {
-          filter: {
-            and: [
-              {
-                subject: {
-                  eq: subject,
-                },
+    fetchSubtitles()
+  }, [])
+
+  //先查詢副標題有哪些
+  async function fetchSubtitles() {
+    await API.graphql(
+      graphqlOperation(listSubtitles, {
+        filter: {
+          and: [
+            {
+              subject: {
+                eq: subject,
               },
-              {
-                isShow: {
-                  eq: true,
-                },
+            },
+            {
+              show: {
+                eq: true,
               },
-            ],
-          },
-        })
-      ).then((response) => {
+            },
+          ],
+        },
+      })
+    )
+      .then((response) => {
         const subtitleAry = response.data.listSubtitles.items
         if (subtitleAry.length === 0) {
           setListAry([])
@@ -55,17 +63,9 @@ export default function SubtitleList(props) {
         let finalAry = []
         subtitleAry.forEach((item, _) => {
           fetchQuestions(item.subtitle).then((response) => {
-            let questionAry = []
             let questionListAry = response.data.listQuestions.items
-            questionListAry = questionListAry.sort((a, b) =>
-              a.question.localeCompare(b.question)
-            )
-            questionAry = questionListAry.map((item) => {
-              return {
-                id: item.id,
-                question: item.question,
-                clickCount: item.clickCount,
-              }
+            questionListAry = questionListAry.sort((a, b) => {
+              return a.order - b.order
             })
             //最後將查到的副標題、問題，整理成一個新狀態
             finalAry = [
@@ -74,7 +74,7 @@ export default function SubtitleList(props) {
                 id: item.id,
                 subject: item.subject,
                 subtitle: item.subtitle,
-                questionAry: questionAry,
+                questionAry: questionListAry,
                 expanded: false,
               },
             ]
@@ -90,36 +90,41 @@ export default function SubtitleList(props) {
             }
           })
         })
+        setRefreshing(false)
       })
-    }
-    //查詢問題
-    async function fetchQuestions(subtitle) {
-      return await API.graphql(
-        graphqlOperation(listQuestions, {
-          filter: {
-            and: [
-              {
-                subject: {
-                  eq: subject,
-                },
+      .catch((err) => {
+        errorHandler(err)
+      })
+  }
+  //查詢屬於副標題的問題
+  async function fetchQuestions(subtitle) {
+    return await API.graphql(
+      graphqlOperation(listQuestions, {
+        filter: {
+          and: [
+            {
+              subtitle: {
+                eq: subtitle,
               },
-              {
-                subtitle: {
-                  eq: subtitle,
-                },
+            },
+            {
+              show: {
+                eq: true,
               },
-              {
-                isShow: {
-                  eq: true,
-                },
-              },
-            ],
-          },
-        })
-      )
-    }
+            },
+          ],
+        },
+      })
+    ).catch((err) => {
+      errorHandler(err)
+    })
+  }
+
+  //下拉刷新
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true)
     fetchSubtitles()
-  }, [])
+  }, [refreshing])
 
   const subtitleList = (itemData) => {
     return (
@@ -162,8 +167,8 @@ export default function SubtitleList(props) {
               onPress={() => {
                 props.navigation.navigate('QuestionScreen', {
                   subtitle: itemData.item.subtitle,
-                  question: question.question,
                   id: question.id,
+                  order: question.order,
                 })
               }}
               key={question.id}>
@@ -190,6 +195,9 @@ export default function SubtitleList(props) {
             <View style={styles.emptyContainer}>
               <MyText style={styles.emptyText}>目前沒有資料，歡迎提供</MyText>
             </View>
+          }
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
         />
       )}

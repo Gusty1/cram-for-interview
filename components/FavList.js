@@ -6,6 +6,7 @@ import {
   FlatList,
   Dimensions,
   Image,
+  RefreshControl,
 } from 'react-native'
 import { API, graphqlOperation } from 'aws-amplify'
 import { ListItem } from '@rneui/themed'
@@ -21,148 +22,174 @@ import MyText from '../components/MyText'
 import Styles from '../constants/Styles'
 import Colors from '../constants/Colors'
 import SubtitleImgPath from '../constants/SubtitleImgPath'
+import { errorHandler } from '../tools/OtherTool'
 
 const screenHeight = Dimensions.get('window').height
 
 export default function FavList(props) {
   const favoriteAry = useSelector((state) => state.favoriteAry.value)
   const [showFavAry, setShowFavAry] = useState(null)
+  const [refreshing, setRefreshing] = React.useState(false)
 
+  //下拉刷新
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true)
+    buildFavData()
+  }, [refreshing])
+
+  //載入時用sqllite的資料找 主題、副標題、問題
   useEffect(() => {
     if (favoriteAry.length === 0) {
       setShowFavAry(favoriteAry)
       return
     }
-    ;(async function buildFavData() {
-      // console.log(favoriteAry)
-      setShowFavAry(null)
-
-      //in不會用，所以B計畫，把參數組合成一個or陣列
-      let params = favoriteAry.map((questionData) => {
-        return {
-          question: {
-            eq: questionData,
-          },
-        }
-      })
-      let myFavQuestionAry = []
-      //用收藏的問題找到問題詳情
-      await API.graphql(
-        graphqlOperation(listQuestions, {
-          filter: {
-            and: [
-              {
-                isShow: {
-                  eq: true,
-                },
-              },
-              {
-                or: params,
-              },
-            ],
-          },
-        })
-      ).then((response) => {
-        myFavQuestionAry = response.data.listQuestions.items
-      })
-
-      //查到問題詳情以後再過濾出標題和副標題，並組合出各自的or陣列
-      let subjectAry = removeDuplicates(myFavQuestionAry, 'subject').map(
-        (item) => item.subject
-      )
-      let subjectAryParams = subjectAry.map((subjectData) => {
-        return {
-          subject: {
-            eq: subjectData,
-          },
-        }
-      })
-      let subtitleAry = removeDuplicates(myFavQuestionAry, 'subtitle').map(
-        (item) => item.subtitle
-      )
-      let subtitleAryParams = subtitleAry.map((subtitleData) => {
-        return {
-          subtitle: {
-            eq: subtitleData,
-          },
-        }
-      })
-
-      //用主題查詢主題詳情
-      let mySubjectAry = []
-      await API.graphql(
-        graphqlOperation(listSubjects, {
-          filter: {
-            and: [
-              {
-                isShow: {
-                  eq: true,
-                },
-              },
-              {
-                or: subjectAryParams,
-              },
-            ],
-          },
-        })
-      ).then((response) => {
-        mySubjectAry = response.data.listSubjects.items
-      })
-
-      //用副主題查詢副主題祥情
-      let mySubtitleAry = []
-      await API.graphql(
-        graphqlOperation(listSubtitles, {
-          filter: {
-            and: [
-              {
-                isShow: {
-                  eq: true,
-                },
-              },
-              {
-                or: subtitleAryParams,
-              },
-            ],
-          },
-        })
-      ).then((response) => {
-        mySubtitleAry = response.data.listSubtitles.items
-      })
-
-      //排序主題和副主題陣列
-      mySubjectAry = mySubjectAry.sort((a, b) =>
-        a.subject.localeCompare(b.subject)
-      )
-      mySubtitleAry = mySubtitleAry.sort((a, b) =>
-        a.subtitle.localeCompare(b.subtitle)
-      )
-      //最後用嵌套的方式 主題 嵌 副主題
-      for (let i = 0; i < mySubtitleAry.length; i++) {
-        mySubtitleAry[i].questionAry = []
-        for (let j = 0; j < myFavQuestionAry.length; j++) {
-          if (mySubtitleAry[i].subtitle === myFavQuestionAry[j].subtitle) {
-            mySubtitleAry[i].questionAry.push({
-              ...myFavQuestionAry[j],
-              expanded: false,
-            })
-          }
-        }
-      }
-      //副主題 嵌 問題詳情
-      for (let i = 0; i < mySubjectAry.length; i++) {
-        mySubjectAry[i].color = randomColor(0.3)
-        mySubjectAry[i].subtitleAry = []
-        for (let j = 0; j < mySubtitleAry.length; j++) {
-          if (mySubjectAry[i].subject === mySubtitleAry[j].subject) {
-            mySubjectAry[i].subtitleAry.push(mySubtitleAry[j])
-          }
-        }
-      }
-      setShowFavAry(mySubjectAry)
-    })()
+    buildFavData()
   }, [favoriteAry])
 
+  async function buildFavData() {
+    setShowFavAry(null)
+    //in不會用，所以B計畫，把參數組合成一個or陣列
+    let params = favoriteAry.map((questionData) => {
+      return {
+        id: {
+          eq: questionData,
+        },
+      }
+    })
+    let myFavQuestionAry = []
+    //用收藏的問題找到問題詳情
+    await API.graphql(
+      graphqlOperation(listQuestions, {
+        filter: {
+          and: [
+            {
+              show: {
+                eq: true,
+              },
+            },
+            {
+              or: params,
+            },
+          ],
+        },
+      })
+    )
+      .then((response) => {
+        myFavQuestionAry = response.data.listQuestions.items
+        myFavQuestionAry = myFavQuestionAry.sort((a, b) => a.order - b.order)
+      })
+      .catch((err) => {
+        errorHandler(err)
+      })
+
+    //問題陣列過濾副標題並組合查詢的or陣列
+    let subtitleAry = removeDuplicates(myFavQuestionAry, 'subtitle').map(
+      (item) => item.subtitle
+    )
+    let subtitleAryParams = subtitleAry.map((subtitleData) => {
+      return {
+        subtitle: {
+          eq: subtitleData,
+        },
+      }
+    })
+
+    //查詢副標題資料
+    let mySubtitleAry = []
+    await API.graphql(
+      graphqlOperation(listSubtitles, {
+        filter: {
+          and: [
+            {
+              show: {
+                eq: true,
+              },
+            },
+            {
+              or: subtitleAryParams,
+            },
+          ],
+        },
+      })
+    )
+      .then((response) => {
+        mySubtitleAry = response.data.listSubtitles.items
+      })
+      .catch((err) => {
+        errorHandler(err)
+      })
+
+    //副標題陣列過濾主題並組合查詢的or陣列
+    let subjectAry = removeDuplicates(mySubtitleAry, 'subject').map(
+      (item) => item.subject
+    )
+    let subjectAryParams = subjectAry.map((subjectData) => {
+      return {
+        subject: {
+          eq: subjectData,
+        },
+      }
+    })
+
+    //查詢主題資料
+    let mySubjectAry = []
+    await API.graphql(
+      graphqlOperation(listSubjects, {
+        filter: {
+          and: [
+            {
+              show: {
+                eq: true,
+              },
+            },
+            {
+              or: subjectAryParams,
+            },
+          ],
+        },
+      })
+    )
+      .then((response) => {
+        mySubjectAry = response.data.listSubjects.items
+      })
+      .catch((err) => {
+        errorHandler(err)
+      })
+
+    //排序主題和副主題陣列
+    mySubjectAry = mySubjectAry.sort((a, b) =>
+      a.subject.localeCompare(b.subject)
+    )
+    mySubtitleAry = mySubtitleAry.sort((a, b) =>
+      a.subtitle.localeCompare(b.subtitle)
+    )
+    //最後用嵌套的方式 主題 嵌 副主題
+    for (let i = 0; i < mySubtitleAry.length; i++) {
+      mySubtitleAry[i].questionAry = []
+      for (let j = 0; j < myFavQuestionAry.length; j++) {
+        if (mySubtitleAry[i].subtitle === myFavQuestionAry[j].subtitle) {
+          mySubtitleAry[i].questionAry.push({
+            ...myFavQuestionAry[j],
+            expanded: false,
+          })
+        }
+      }
+    }
+    //副主題 嵌 問題詳情
+    for (let i = 0; i < mySubjectAry.length; i++) {
+      mySubjectAry[i].color = randomColor(0.3)
+      mySubjectAry[i].subtitleAry = []
+      for (let j = 0; j < mySubtitleAry.length; j++) {
+        if (mySubjectAry[i].subject === mySubtitleAry[j].subject) {
+          mySubjectAry[i].subtitleAry.push(mySubtitleAry[j])
+        }
+      }
+    }
+    setShowFavAry(mySubjectAry)
+    setRefreshing(false)
+  }
+
+  //顯示清單組件
   const subtitleList = (itemData) => {
     return (
       <View
@@ -174,7 +201,7 @@ export default function FavList(props) {
           paddingBottom: 10,
           borderWidth: 2,
         }}>
-        <MyText style={styles.favSubject}>{itemData.item.chineseName}</MyText>
+        <MyText style={styles.favSubject}>{itemData.item.subject_zh}</MyText>
         {itemData.item.subtitleAry.map((subtileData) => {
           return (
             <ListItem.Accordion
@@ -222,8 +249,9 @@ export default function FavList(props) {
                     onPress={() => {
                       props.navigation.navigate('FavQuestionScreen', {
                         subtitle: question.subtitle,
-                        question: question.question,
+                        order: question.order,
                         id: question.id,
+                        favQuestionAry: subtileData.questionAry,
                       })
                     }}
                     key={question.id}>
@@ -253,6 +281,9 @@ export default function FavList(props) {
             <View style={styles.emptyContainer}>
               <MyText style={styles.emptyText}>尚未收藏任何題目</MyText>
             </View>
+          }
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
         />
       )}

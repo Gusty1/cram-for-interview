@@ -7,8 +7,8 @@ export const init = () => {
   const promise = new Promise((resolve, reject) => {
     db.transaction((tx) => {
       tx.executeSql(
-        // 'drop table favoriteQuestion',
-        'CREATE TABLE IF NOT EXISTS favoriteQuestion (id INTEGER PRIMARY KEY NOT NULL , question TEXT NOT NULL);',
+        //'drop table favoriteQuestion',
+        'CREATE TABLE IF NOT EXISTS favoriteQuestion (id INTEGER PRIMARY KEY NOT NULL , questionId TEXT NOT NULL);',
         [],
         () => {
           //成功的回調
@@ -24,13 +24,13 @@ export const init = () => {
   return promise
 }
 
-export const insertFavorite = (question) => {
+export const insertFavorite = (questionId) => {
   //第2個參數是放要寫入SQL的變數(值)
   const promise = new Promise((resolve, reject) => {
     db.transaction((tx) => {
       tx.executeSql(
-        'INSERT INTO favoriteQuestion (question) VALUES(?)',
-        [question],
+        'INSERT INTO favoriteQuestion (questionId) VALUES(?)',
+        [questionId],
         (_, result) => {
           resolve(result)
         },
@@ -43,12 +43,12 @@ export const insertFavorite = (question) => {
   return promise
 }
 
-export const fetchFavorite = (question) => {
+export const fetchFavorite = (questionId) => {
   const promise = new Promise((resolve, reject) => {
     db.transaction((tx) => {
       tx.executeSql(
-        'select * FROM favoriteQuestion WHERE question = ? ',
-        [question],
+        'select * FROM favoriteQuestion WHERE questionId = ? ',
+        [questionId],
         (_, result) => {
           resolve(result)
         },
@@ -79,12 +79,12 @@ export const fetchFavoriteAll = () => {
   return promise
 }
 
-export const deleteFavorite = (question) => {
+export const deleteFavorite = (questionId) => {
   const promise = new Promise((resolve, reject) => {
     db.transaction((tx) => {
       tx.executeSql(
-        'DELETE FROM favoriteQuestion WHERE question =?',
-        [question],
+        'DELETE FROM favoriteQuestion WHERE questionId =?',
+        [questionId],
         (_, result) => {
           resolve(result)
         },

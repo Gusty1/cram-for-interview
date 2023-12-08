@@ -6,10 +6,10 @@ export const onCreateSubject = /* GraphQL */ `
     onCreateSubject(filter: $filter) {
       id
       subject
-      chineseName
+      subject_zh
+      show
       createDate
       updateDate
-      isShow
       remark
       createdAt
       updatedAt
@@ -22,10 +22,10 @@ export const onUpdateSubject = /* GraphQL */ `
     onUpdateSubject(filter: $filter) {
       id
       subject
-      chineseName
+      subject_zh
+      show
       createDate
       updateDate
-      isShow
       remark
       createdAt
       updatedAt
@@ -38,10 +38,10 @@ export const onDeleteSubject = /* GraphQL */ `
     onDeleteSubject(filter: $filter) {
       id
       subject
-      chineseName
+      subject_zh
+      show
       createDate
       updateDate
-      isShow
       remark
       createdAt
       updatedAt
@@ -55,9 +55,10 @@ export const onCreateSubtitle = /* GraphQL */ `
       id
       subject
       subtitle
+      count
+      show
       createDate
       updateDate
-      isShow
       remark
       createdAt
       updatedAt
@@ -71,9 +72,10 @@ export const onUpdateSubtitle = /* GraphQL */ `
       id
       subject
       subtitle
+      count
+      show
       createDate
       updateDate
-      isShow
       remark
       createdAt
       updatedAt
@@ -87,9 +89,10 @@ export const onDeleteSubtitle = /* GraphQL */ `
       id
       subject
       subtitle
+      count
+      show
       createDate
       updateDate
-      isShow
       remark
       createdAt
       updatedAt
@@ -101,14 +104,14 @@ export const onCreateQuestion = /* GraphQL */ `
   subscription OnCreateQuestion($filter: ModelSubscriptionQuestionFilterInput) {
     onCreateQuestion(filter: $filter) {
       id
-      subject
       subtitle
       question
       answer
-      clickCount
+      count
+      show
+      order
       createDate
       updateDate
-      isShow
       remark
       createdAt
       updatedAt
@@ -120,14 +123,14 @@ export const onUpdateQuestion = /* GraphQL */ `
   subscription OnUpdateQuestion($filter: ModelSubscriptionQuestionFilterInput) {
     onUpdateQuestion(filter: $filter) {
       id
-      subject
       subtitle
       question
       answer
-      clickCount
+      count
+      show
+      order
       createDate
       updateDate
-      isShow
       remark
       createdAt
       updatedAt
@@ -139,14 +142,14 @@ export const onDeleteQuestion = /* GraphQL */ `
   subscription OnDeleteQuestion($filter: ModelSubscriptionQuestionFilterInput) {
     onDeleteQuestion(filter: $filter) {
       id
-      subject
       subtitle
       question
       answer
-      clickCount
+      count
+      show
+      order
       createDate
       updateDate
-      isShow
       remark
       createdAt
       updatedAt
@@ -154,19 +157,17 @@ export const onDeleteQuestion = /* GraphQL */ `
     }
   }
 `;
-export const onCreateQuestionReport = /* GraphQL */ `
-  subscription OnCreateQuestionReport(
-    $filter: ModelSubscriptionQuestionReportFilterInput
-  ) {
-    onCreateQuestionReport(filter: $filter) {
+export const onCreateReport = /* GraphQL */ `
+  subscription OnCreateReport($filter: ModelSubscriptionReportFilterInput) {
+    onCreateReport(filter: $filter) {
       id
       questionId
-      question
       errorMsg
+      state
+      result
+      reason
       createDate
       updateDate
-      checkResult
-      failReason
       remark
       createdAt
       updatedAt
@@ -174,19 +175,17 @@ export const onCreateQuestionReport = /* GraphQL */ `
     }
   }
 `;
-export const onUpdateQuestionReport = /* GraphQL */ `
-  subscription OnUpdateQuestionReport(
-    $filter: ModelSubscriptionQuestionReportFilterInput
-  ) {
-    onUpdateQuestionReport(filter: $filter) {
+export const onUpdateReport = /* GraphQL */ `
+  subscription OnUpdateReport($filter: ModelSubscriptionReportFilterInput) {
+    onUpdateReport(filter: $filter) {
       id
       questionId
-      question
       errorMsg
+      state
+      result
+      reason
       createDate
       updateDate
-      checkResult
-      failReason
       remark
       createdAt
       updatedAt
@@ -194,19 +193,17 @@ export const onUpdateQuestionReport = /* GraphQL */ `
     }
   }
 `;
-export const onDeleteQuestionReport = /* GraphQL */ `
-  subscription OnDeleteQuestionReport(
-    $filter: ModelSubscriptionQuestionReportFilterInput
-  ) {
-    onDeleteQuestionReport(filter: $filter) {
+export const onDeleteReport = /* GraphQL */ `
+  subscription OnDeleteReport($filter: ModelSubscriptionReportFilterInput) {
+    onDeleteReport(filter: $filter) {
       id
       questionId
-      question
       errorMsg
+      state
+      result
+      reason
       createDate
       updateDate
-      checkResult
-      failReason
       remark
       createdAt
       updatedAt
@@ -219,10 +216,11 @@ export const onCreateOpinion = /* GraphQL */ `
     onCreateOpinion(filter: $filter) {
       id
       opinion
-      checkResult
+      state
+      result
+      reason
       createDate
       updateDate
-      failReason
       remark
       createdAt
       updatedAt
@@ -235,10 +233,11 @@ export const onUpdateOpinion = /* GraphQL */ `
     onUpdateOpinion(filter: $filter) {
       id
       opinion
-      checkResult
+      state
+      result
+      reason
       createDate
       updateDate
-      failReason
       remark
       createdAt
       updatedAt
@@ -251,10 +250,11 @@ export const onDeleteOpinion = /* GraphQL */ `
     onDeleteOpinion(filter: $filter) {
       id
       opinion
-      checkResult
+      state
+      result
+      reason
       createDate
       updateDate
-      failReason
       remark
       createdAt
       updatedAt
@@ -272,8 +272,9 @@ export const onCreateNewQuestion = /* GraphQL */ `
       subtitle
       question
       answer
-      checkResult
-      failReason
+      state
+      result
+      reason
       createDate
       updateDate
       remark
@@ -293,8 +294,9 @@ export const onUpdateNewQuestion = /* GraphQL */ `
       subtitle
       question
       answer
-      checkResult
-      failReason
+      state
+      result
+      reason
       createDate
       updateDate
       remark
@@ -314,8 +316,9 @@ export const onDeleteNewQuestion = /* GraphQL */ `
       subtitle
       question
       answer
-      checkResult
-      failReason
+      state
+      result
+      reason
       createDate
       updateDate
       remark

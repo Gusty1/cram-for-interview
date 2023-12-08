@@ -14,18 +14,19 @@ import Styles from '../constants/Styles'
 import { createOpinion } from '../src/graphql/mutations'
 import moment from 'moment'
 import 'moment/locale/zh-tw'
+import { errorHandler } from '../tools/OtherTool'
 
-export default function ReportScreen() {
+export default function ReportScreen () {
   const [isLoading, setIsLoading] = useState(false)
   const [opinion, setOpinion] = useState('')
 
   //接收意見內容
-  function opinionHandler(text) {
+  function opinionHandler (text) {
     setOpinion(text)
   }
 
   //送出意見
-  async function sendOpinion() {
+  async function sendOpinion () {
     if (opinion === '') {
       Alert.alert('請輸入意見', '', [], {
         cancelable: true,
@@ -37,10 +38,11 @@ export default function ReportScreen() {
       graphqlOperation(createOpinion, {
         input: {
           opinion: opinion,
-          checkResult: '審核中',
+          state: '處理中',
           createDate: moment().format('YYYY/MM/DD HH:mm:ss (dd)'),
           updateDate: moment().format('YYYY/MM/DD HH:mm:ss (dd)'),
-          failReason: '',
+          result: '',
+          reason: '',
           remark: '',
         },
       })
@@ -51,6 +53,8 @@ export default function ReportScreen() {
       setIsLoading(false)
       setOpinion('')
       Keyboard.dismiss()
+    }).catch((err) => {
+      errorHandler(err)
     })
   }
 

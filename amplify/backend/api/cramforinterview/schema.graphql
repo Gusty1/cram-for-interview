@@ -6,10 +6,10 @@ input AMPLIFY {
 type Subject @model {
   id: ID!
   subject: String!
-  chineseName: String
+  subject_zh: String
+  show: Boolean
   createDate: String
   updateDate: String
-  isShow: Boolean
   remark: String
 }
 
@@ -17,55 +17,58 @@ type Subtitle @model {
   id: ID!
   subject: String
   subtitle: String!
+  count: Int
+  show: Boolean
   createDate: String
   updateDate: String
-  isShow: Boolean
   remark: String
 }
 
 type Question @model {
   id: ID!
-  subject: String
   subtitle: String
   question: String!
   answer: String
-  clickCount: Int
+  count: Int
+  show: Boolean
+  order: Int
   createDate: String
   updateDate: String
-  isShow: Boolean
   remark: String
 }
 
-type QuestionReport @model {
+type Report @model {
   id: ID!
-  questionId: String
-  question: String
-  errorMsg: String
+  questionId: String!
+  errorMsg: String!
+  state: String
+  result: String
+  reason: String
   createDate: String
   updateDate: String
-  checkResult: String
-  failReason: String
   remark: String
 }
 
 type Opinion @model {
   id: ID!
-  opinion: String
-  checkResult: String
+  opinion: String!
+  state: String
+  result: String
+  reason: String
   createDate: String
   updateDate: String
-  failReason: String
   remark: String
 }
 
 type NewQuestion @model {
   id: ID!
-  subject: String
+  subject: String!
   subtitle: String
-  question: String
+  question: String!
   answer: String
-  checkResult: String
-  failReason: String
+  state: String
+  result: String
+  reason: String
   createDate: String
   updateDate: String
   remark: String

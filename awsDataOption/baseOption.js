@@ -14,14 +14,14 @@ export function IUDOption () {
     API.graphql(
       graphqlOperation(createQuestion, {
         input: {
-          subject: 'code',
-          subtitle: 'Java',
-          question: '說明集合List與Set區別?',
+          subtitle: 'Spring',
+          question: '介紹 Spring Bean 的生命週期',
           answer: '',
-          clickCount: 0,
+          count: 0,
+          show: true,
+          order: 3,
           createDate: moment().format('YYYY/MM/DD HH:mm:ss (dd)'),
           updateDate: moment().format('YYYY/MM/DD HH:mm:ss (dd)'),
-          isShow: true,
           remark: '',
         },
       })

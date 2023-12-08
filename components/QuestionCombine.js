@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import {
   View,
   StyleSheet,
@@ -11,8 +11,12 @@ import { SpeedDial, Dialog, Input, Button } from '@rneui/themed'
 import { Entypo, Ionicons, MaterialIcons } from '@expo/vector-icons'
 import { API, graphqlOperation } from 'aws-amplify'
 import { useDispatch, useSelector } from 'react-redux'
+import Markdown from 'react-native-markdown-display'
+import moment from 'moment'
+import 'moment/locale/zh-tw'
+import PagerView from 'react-native-pager-view'
 
-import { createQuestionReport } from '../src/graphql/mutations'
+import { createReport } from '../src/graphql/mutations'
 import { listQuestions } from '../src/graphql/queries'
 import {
   insertFavorite,
@@ -23,8 +27,7 @@ import {
 import MyText from '../components/MyText'
 import Colors from '../constants/Colors'
 import { change } from '../store/slices/favoriteSlices'
-import moment from 'moment'
-import 'moment/locale/zh-tw'
+import { errorHandler } from '../tools/OtherTool'
 
 /*
   問題答案詳細頁+錯誤回報+加入收藏
@@ -34,14 +37,18 @@ export default function QuestionCombine(props) {
   const favoriteAry = useSelector((state) => state.favoriteAry.value)
   const dispatch = useDispatch()
 
-  const id = props.route.params.id
-  const question = props.route.params.question
-  const [answer, setAnswer] = useState('')
+  const subtitle = props.route.params.subtitle
+  const order = props.route.params.order
+  const favQuestionAry = props.route.params.favQuestionAry
+
   const [openButton, setOpenButton] = useState(false)
   const [openDialog, setOpenDialog] = useState(false)
   const [reportMsg, setReportMsg] = useState('')
+  const [questionAry, setQuestionAry] = useState([])
   const [isLoad, setIsLoad] = useState(false)
   const [isFavorite, setIsFavorite] = useState(false)
+  const [questionId, setQuestionId] = useState(props.route.params.id)
+  const pagerViewRef = useRef(null)
 
   //儲存錯誤訊息
   const reportMsgHandler = (text) => {
@@ -58,73 +65,156 @@ export default function QuestionCombine(props) {
     }
     setIsLoad(true)
     await API.graphql(
-      graphqlOperation(createQuestionReport, {
+      graphqlOperation(createReport, {
         input: {
-          questionId: id,
-          question: question,
+          questionId: questionId,
           errorMsg: reportMsg,
+          state: '處理中',
+          result: '',
+          reason: '',
           createDate: moment().format('YYYY/MM/DD HH:mm:ss (dd)'),
           updateDate: moment().format('YYYY/MM/DD HH:mm:ss (dd)'),
-          checkResult: '審核中',
-          failReason: '',
           remark: '',
         },
       })
-    ).then(() => {
-      Alert.alert('送出成功!', '感謝你的回報。', [], {
-        cancelable: true,
+    )
+      .then(() => {
+        Alert.alert('送出成功!', '感謝你的回報。', [], {
+          cancelable: true,
+        })
+        Keyboard.dismiss()
+        setOpenDialog(false)
+        setIsLoad(false)
       })
-      Keyboard.dismiss()
-      setOpenDialog(false)
-      setIsLoad(false)
-    })
+      .catch((err) => {
+        errorHandler(err)
+      })
   }
 
   //新增或取消收藏 呼叫redux改變狀態
   async function favoriteChangeHandler() {
     await fetchFavoriteAll().then((data) => {
-      const favAry = data.rows._array.map((item) => item.question)
+      const favAry = data.rows._array.map((item) => item.questionId)
       dispatch(change(favAry))
     })
   }
 
   // 檢查收藏是否取消或存在
   useEffect(() => {
-    async function querySql() {
-      await fetchFavorite(question).then((dbResult) => {
+    ;(async function querySql() {
+      await fetchFavorite(questionId).then((dbResult) => {
         if (dbResult.rows.length === 1) setIsFavorite(true)
         else setIsFavorite(false)
       })
-    }
-    querySql()
-  }, [favoriteAry])
+    })()
+  }, [favoriteAry, questionId])
 
-  //用問題查詢答案
+  //用副標題查詢問題
   useEffect(() => {
-    ;(async function getQuestion() {
+    ;(async function fetchQuestion() {
+      //因為跟最愛題目共用，所以查詢條件要分開
+      let condition = {}
+      if (favQuestionAry !== undefined && favQuestionAry !== null) {
+        //最愛題目加上最愛題目的id
+        let favParams = []
+        for (favObj of favQuestionAry) {
+          favParams.push({
+            id: { eq: favObj.id },
+          })
+        }
+        condition = {
+          and: [
+            {
+              subtitle: {
+                eq: subtitle,
+              },
+            },
+            {
+              show: {
+                eq: true,
+              },
+            },
+            {
+              or: favParams,
+            },
+          ],
+        }
+      } else {
+        //一般查詢副標題下全部的題目
+        condition = {
+          and: [
+            {
+              subtitle: {
+                eq: subtitle,
+              },
+            },
+            {
+              show: {
+                eq: true,
+              },
+            },
+          ],
+        }
+      }
       await API.graphql(
         graphqlOperation(listQuestions, {
-          filter: {
-            and: [{ isShow: { eq: true }, question: { eq: question } }],
-          },
+          filter: condition,
         })
-      ).then((response) => {
-        const questionAry = response.data.listQuestions.items
-        if (questionAry.length > 0) setAnswer(questionAry[0].answer)
-      })
+      )
+        .then((response) => {
+          setQuestionAry(
+            response.data.listQuestions.items.sort((a, b) => a.order - b.order)
+          )
+        })
+        .catch((err) => {
+          errorHandler(err)
+        })
     })()
+    pagerViewRef.current.setPageWithoutAnimation(order)
   }, [])
+
+  //PagerView的initialPage對動態產生的不起作用，所以就設定當questionAry完成時執行切換
+  useEffect(() => {
+    if (favQuestionAry !== undefined && favQuestionAry !== null) {
+      initFavIndex = questionAry.findIndex((value) => value.id === questionId)
+      pagerViewRef.current.setPageWithoutAnimation(initFavIndex)
+    } else {
+      pagerViewRef.current.setPageWithoutAnimation(order - 1)
+    }
+  }, [questionAry])
 
   return (
     <>
-      <View style={styles.questionArea}>
-        <MyText style={styles.questionFont}>{question}</MyText>
-      </View>
-      <ScrollView style={styles.answerArea}>
-        <MyText style={styles.answerFont}>
-          {answer === '' ? <ActivityIndicator size="large" /> : answer}
-        </MyText>
-      </ScrollView>
+      <PagerView
+        ref={pagerViewRef}
+        style={styles.pagerView}
+        onPageSelected={(e) => {
+          const questionObj = questionAry.find(
+            (value) => value.order === e.nativeEvent.position + 1
+          )
+          if (questionObj !== null && questionObj !== undefined) {
+            setQuestionId(questionObj.id)
+          }
+        }}>
+        {questionAry.length === 0 ? (
+          <ActivityIndicator size="large" />
+        ) : (
+          questionAry.map((item) => {
+            return (
+              <View key={item.id}>
+                <View style={styles.questionArea}>
+                  <MyText style={styles.questionFont}>{item.question}</MyText>
+                </View>
+                <ScrollView
+                  style={styles.answerArea}
+                  showsVerticalScrollIndicator={false}>
+                  <Markdown>{item.answer}</Markdown>
+                </ScrollView>
+              </View>
+            )
+          })
+        )}
+      </PagerView>
       <SpeedDial
         isOpen={openButton}
         icon={<Entypo name="dots-three-vertical" size={24} color={'white'} />}
@@ -148,7 +238,7 @@ export default function QuestionCombine(props) {
             }
             title="取消收藏"
             onPress={async () => {
-              await deleteFavorite(question).then(() => {
+              await deleteFavorite(questionId).then(() => {
                 setIsFavorite(false)
                 favoriteChangeHandler()
               })
@@ -160,7 +250,7 @@ export default function QuestionCombine(props) {
             icon={<Ionicons name="heart-outline" size={20} color="white" />}
             title="加入收藏"
             onPress={async () => {
-              await insertFavorite(question).then(() => {
+              await insertFavorite(questionId).then(() => {
                 setIsFavorite(true)
                 favoriteChangeHandler()
               })
@@ -221,5 +311,8 @@ const styles = StyleSheet.create({
   },
   reportMargin: {
     marginTop: 10,
+  },
+  pagerView: {
+    flex: 1,
   },
 })

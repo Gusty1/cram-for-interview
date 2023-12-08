@@ -11,6 +11,7 @@ import { Input, Button } from '@rneui/themed'
 import { API, graphqlOperation } from 'aws-amplify'
 import moment from 'moment'
 import 'moment/locale/zh-tw'
+import { errorHandler } from '../tools/OtherTool'
 
 import MyText from '../components/MyText'
 import Styles from '../constants/Styles'
@@ -53,24 +54,29 @@ export default function AddQuestion() {
           subtitle: subtitle,
           question: question,
           answer: answer,
-          checkResult: '審核中',
-          failReason: '',
+          state: '處理中',
+          result: '',
+          reason: '',
           createDate: moment().format('YYYY/MM/DD HH:mm:ss (dd)'),
           updateDate: moment().format('YYYY/MM/DD HH:mm:ss (dd)'),
           remark: '',
         },
       })
-    ).then(() => {
-      Alert.alert('送出成功!', '我們將會盡快審核。', [], {
-        cancelable: true,
+    )
+      .then(() => {
+        Alert.alert('送出成功!', '感謝提供，我們將會盡快審核。', [], {
+          cancelable: true,
+        })
+        setIsLoading(false)
+        setSubject('')
+        setSubtitle('')
+        setQuestion('')
+        setAnswer('')
+        Keyboard.dismiss()
       })
-      setIsLoading(false)
-      setSubject('')
-      setSubtitle('')
-      setQuestion('')
-      setAnswer('')
-      Keyboard.dismiss()
-    })
+      .catch((err) => {
+        errorHandler(err)
+      })
   }
 
   return (
