@@ -73,7 +73,7 @@ export default function QuestionCombine(props) {
           result: '',
           reason: '',
           createDate: moment().format('YYYY/MM/DD HH:mm:ss (dd)'),
-          updateDate: moment().format('YYYY/MM/DD HH:mm:ss (dd)'),
+          updateDate: '',
           remark: '',
         },
       })
@@ -103,7 +103,7 @@ export default function QuestionCombine(props) {
   useEffect(() => {
     ;(async function querySql() {
       await fetchFavorite(questionId).then((dbResult) => {
-        if (dbResult.rows.length === 1) setIsFavorite(true)
+        if (dbResult.rows.length > 0) setIsFavorite(true)
         else setIsFavorite(false)
       })
     })()

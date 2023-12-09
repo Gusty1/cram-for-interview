@@ -16,7 +16,7 @@ export const onCreateSubject = /* GraphQL */ `
       __typename
     }
   }
-`;
+`
 export const onUpdateSubject = /* GraphQL */ `
   subscription OnUpdateSubject($filter: ModelSubscriptionSubjectFilterInput) {
     onUpdateSubject(filter: $filter) {
@@ -32,7 +32,7 @@ export const onUpdateSubject = /* GraphQL */ `
       __typename
     }
   }
-`;
+`
 export const onDeleteSubject = /* GraphQL */ `
   subscription OnDeleteSubject($filter: ModelSubscriptionSubjectFilterInput) {
     onDeleteSubject(filter: $filter) {
@@ -48,7 +48,7 @@ export const onDeleteSubject = /* GraphQL */ `
       __typename
     }
   }
-`;
+`
 export const onCreateSubtitle = /* GraphQL */ `
   subscription OnCreateSubtitle($filter: ModelSubscriptionSubtitleFilterInput) {
     onCreateSubtitle(filter: $filter) {
@@ -65,7 +65,7 @@ export const onCreateSubtitle = /* GraphQL */ `
       __typename
     }
   }
-`;
+`
 export const onUpdateSubtitle = /* GraphQL */ `
   subscription OnUpdateSubtitle($filter: ModelSubscriptionSubtitleFilterInput) {
     onUpdateSubtitle(filter: $filter) {
@@ -82,7 +82,7 @@ export const onUpdateSubtitle = /* GraphQL */ `
       __typename
     }
   }
-`;
+`
 export const onDeleteSubtitle = /* GraphQL */ `
   subscription OnDeleteSubtitle($filter: ModelSubscriptionSubtitleFilterInput) {
     onDeleteSubtitle(filter: $filter) {
@@ -99,7 +99,7 @@ export const onDeleteSubtitle = /* GraphQL */ `
       __typename
     }
   }
-`;
+`
 export const onCreateQuestion = /* GraphQL */ `
   subscription OnCreateQuestion($filter: ModelSubscriptionQuestionFilterInput) {
     onCreateQuestion(filter: $filter) {
@@ -118,7 +118,7 @@ export const onCreateQuestion = /* GraphQL */ `
       __typename
     }
   }
-`;
+`
 export const onUpdateQuestion = /* GraphQL */ `
   subscription OnUpdateQuestion($filter: ModelSubscriptionQuestionFilterInput) {
     onUpdateQuestion(filter: $filter) {
@@ -137,7 +137,7 @@ export const onUpdateQuestion = /* GraphQL */ `
       __typename
     }
   }
-`;
+`
 export const onDeleteQuestion = /* GraphQL */ `
   subscription OnDeleteQuestion($filter: ModelSubscriptionQuestionFilterInput) {
     onDeleteQuestion(filter: $filter) {
@@ -156,7 +156,7 @@ export const onDeleteQuestion = /* GraphQL */ `
       __typename
     }
   }
-`;
+`
 export const onCreateReport = /* GraphQL */ `
   subscription OnCreateReport($filter: ModelSubscriptionReportFilterInput) {
     onCreateReport(filter: $filter) {
@@ -174,7 +174,7 @@ export const onCreateReport = /* GraphQL */ `
       __typename
     }
   }
-`;
+`
 export const onUpdateReport = /* GraphQL */ `
   subscription OnUpdateReport($filter: ModelSubscriptionReportFilterInput) {
     onUpdateReport(filter: $filter) {
@@ -192,7 +192,7 @@ export const onUpdateReport = /* GraphQL */ `
       __typename
     }
   }
-`;
+`
 export const onDeleteReport = /* GraphQL */ `
   subscription OnDeleteReport($filter: ModelSubscriptionReportFilterInput) {
     onDeleteReport(filter: $filter) {
@@ -210,7 +210,7 @@ export const onDeleteReport = /* GraphQL */ `
       __typename
     }
   }
-`;
+`
 export const onCreateOpinion = /* GraphQL */ `
   subscription OnCreateOpinion($filter: ModelSubscriptionOpinionFilterInput) {
     onCreateOpinion(filter: $filter) {
@@ -227,7 +227,7 @@ export const onCreateOpinion = /* GraphQL */ `
       __typename
     }
   }
-`;
+`
 export const onUpdateOpinion = /* GraphQL */ `
   subscription OnUpdateOpinion($filter: ModelSubscriptionOpinionFilterInput) {
     onUpdateOpinion(filter: $filter) {
@@ -244,7 +244,7 @@ export const onUpdateOpinion = /* GraphQL */ `
       __typename
     }
   }
-`;
+`
 export const onDeleteOpinion = /* GraphQL */ `
   subscription OnDeleteOpinion($filter: ModelSubscriptionOpinionFilterInput) {
     onDeleteOpinion(filter: $filter) {
@@ -261,7 +261,7 @@ export const onDeleteOpinion = /* GraphQL */ `
       __typename
     }
   }
-`;
+`
 export const onCreateNewQuestion = /* GraphQL */ `
   subscription OnCreateNewQuestion(
     $filter: ModelSubscriptionNewQuestionFilterInput
@@ -283,7 +283,7 @@ export const onCreateNewQuestion = /* GraphQL */ `
       __typename
     }
   }
-`;
+`
 export const onUpdateNewQuestion = /* GraphQL */ `
   subscription OnUpdateNewQuestion(
     $filter: ModelSubscriptionNewQuestionFilterInput
@@ -305,7 +305,7 @@ export const onUpdateNewQuestion = /* GraphQL */ `
       __typename
     }
   }
-`;
+`
 export const onDeleteNewQuestion = /* GraphQL */ `
   subscription OnDeleteNewQuestion(
     $filter: ModelSubscriptionNewQuestionFilterInput
@@ -327,4 +327,4 @@ export const onDeleteNewQuestion = /* GraphQL */ `
       __typename
     }
   }
-`;
+`

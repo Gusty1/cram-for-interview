@@ -40,7 +40,7 @@ export default function ReportScreen () {
           opinion: opinion,
           state: '處理中',
           createDate: moment().format('YYYY/MM/DD HH:mm:ss (dd)'),
-          updateDate: moment().format('YYYY/MM/DD HH:mm:ss (dd)'),
+          updateDate: '',
           result: '',
           reason: '',
           remark: '',

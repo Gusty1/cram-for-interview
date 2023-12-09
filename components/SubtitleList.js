@@ -9,6 +9,8 @@ import {
   RefreshControl,
 } from 'react-native'
 import { ListItem } from '@rneui/themed'
+import { Ionicons, Fontisto } from '@expo/vector-icons'
+import { useSelector } from 'react-redux'
 
 import MyText from '../components/MyText'
 import Colors from '../constants/Colors'
@@ -24,16 +26,31 @@ const screenHeight = Dimensions.get('window').height
   顯示副標題和問題題目的組件
 */
 export default function SubtitleList(props) {
+  const favoriteAry = useSelector((state) => state.favoriteAry.value)
   const [listAry, setListAry] = useState(null)
   const subject = props.route.params.subject
   const [refreshing, setRefreshing] = React.useState(false)
 
-  //載入時查詢副標題
+  //載入時、收藏切換時開始查詢資料
   useEffect(() => {
     fetchSubtitles()
-  }, [])
+  }, [favoriteAry])
 
-  //先查詢副標題有哪些
+  //處理是否有加入收藏
+  function checkFav(finalListAry) {
+    for (let finalList of finalListAry) {
+      finalList.questionAry.forEach((value) => {
+        if (favoriteAry.findIndex((item) => item === value.id) === -1) {
+          value.favorite = false
+        } else {
+          value.favorite = true
+        }
+      })
+    }
+    return finalListAry
+  }
+
+  //查詢副標題有哪些
   async function fetchSubtitles() {
     await API.graphql(
       graphqlOperation(listSubtitles, {
@@ -86,7 +103,7 @@ export default function SubtitleList(props) {
               finalAry = finalAry.sort((a, b) =>
                 a.subtitle.localeCompare(b.subtitle)
               )
-              setListAry(finalAry)
+              setListAry(checkFav(finalAry))
             }
           })
         })
@@ -172,9 +189,18 @@ export default function SubtitleList(props) {
                 })
               }}
               key={question.id}>
+              {/* <Fontisto
+                style={{ padding: '10px' }}
+                name="fire"
+                size={20}
+                color={Colors.FavoriteColor}
+              /> */}
               <ListItem.Content>
-                <MyText>{question.question}</MyText>
+                <MyText style={{ flex: 1 }}>{question.question}</MyText>
               </ListItem.Content>
+              {question.favorite ? (
+                <Ionicons name="heart" size={20} color={Colors.FavoriteColor} />
+              ) : null}
             </ListItem>
           )
         })}

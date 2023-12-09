@@ -17,7 +17,7 @@ import MyText from '../components/MyText'
 import Styles from '../constants/Styles'
 import { createNewQuestion } from '../src/graphql/mutations'
 
-export default function AddQuestion() {
+export default function AddQuestion () {
   const [isLoading, setIsLoading] = useState(false)
   const [subject, setSubject] = useState('')
   const [subtitle, setSubtitle] = useState('')
@@ -25,21 +25,21 @@ export default function AddQuestion() {
   const [answer, setAnswer] = useState('')
 
   //接收各項問題的輸入
-  function subjectHandler(text) {
+  function subjectHandler (text) {
     setSubject(text)
   }
-  function subtitleHandler(text) {
+  function subtitleHandler (text) {
     setSubtitle(text)
   }
-  function questionHandler(text) {
+  function questionHandler (text) {
     setQuestion(text)
   }
-  function answerHandler(text) {
+  function answerHandler (text) {
     setAnswer(text)
   }
 
   //送出新問題
-  async function sendQuestion() {
+  async function sendQuestion () {
     if (subject.trim() === '' || question.trim() === '') {
       Alert.alert('請輸入主題和問題', '', [], {
         cancelable: true,
@@ -58,7 +58,7 @@ export default function AddQuestion() {
           result: '',
           reason: '',
           createDate: moment().format('YYYY/MM/DD HH:mm:ss (dd)'),
-          updateDate: moment().format('YYYY/MM/DD HH:mm:ss (dd)'),
+          updateDate: '',
           remark: '',
         },
       })

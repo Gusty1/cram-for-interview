@@ -19,7 +19,7 @@ export const createSubject = /* GraphQL */ `
       __typename
     }
   }
-`;
+`
 export const updateSubject = /* GraphQL */ `
   mutation UpdateSubject(
     $input: UpdateSubjectInput!
@@ -38,7 +38,7 @@ export const updateSubject = /* GraphQL */ `
       __typename
     }
   }
-`;
+`
 export const deleteSubject = /* GraphQL */ `
   mutation DeleteSubject(
     $input: DeleteSubjectInput!
@@ -57,7 +57,7 @@ export const deleteSubject = /* GraphQL */ `
       __typename
     }
   }
-`;
+`
 export const createSubtitle = /* GraphQL */ `
   mutation CreateSubtitle(
     $input: CreateSubtitleInput!
@@ -77,7 +77,7 @@ export const createSubtitle = /* GraphQL */ `
       __typename
     }
   }
-`;
+`
 export const updateSubtitle = /* GraphQL */ `
   mutation UpdateSubtitle(
     $input: UpdateSubtitleInput!
@@ -97,7 +97,7 @@ export const updateSubtitle = /* GraphQL */ `
       __typename
     }
   }
-`;
+`
 export const deleteSubtitle = /* GraphQL */ `
   mutation DeleteSubtitle(
     $input: DeleteSubtitleInput!
@@ -117,7 +117,7 @@ export const deleteSubtitle = /* GraphQL */ `
       __typename
     }
   }
-`;
+`
 export const createQuestion = /* GraphQL */ `
   mutation CreateQuestion(
     $input: CreateQuestionInput!
@@ -139,7 +139,7 @@ export const createQuestion = /* GraphQL */ `
       __typename
     }
   }
-`;
+`
 export const updateQuestion = /* GraphQL */ `
   mutation UpdateQuestion(
     $input: UpdateQuestionInput!
@@ -161,7 +161,7 @@ export const updateQuestion = /* GraphQL */ `
       __typename
     }
   }
-`;
+`
 export const deleteQuestion = /* GraphQL */ `
   mutation DeleteQuestion(
     $input: DeleteQuestionInput!
@@ -183,7 +183,7 @@ export const deleteQuestion = /* GraphQL */ `
       __typename
     }
   }
-`;
+`
 export const createReport = /* GraphQL */ `
   mutation CreateReport(
     $input: CreateReportInput!
@@ -204,7 +204,7 @@ export const createReport = /* GraphQL */ `
       __typename
     }
   }
-`;
+`
 export const updateReport = /* GraphQL */ `
   mutation UpdateReport(
     $input: UpdateReportInput!
@@ -225,7 +225,7 @@ export const updateReport = /* GraphQL */ `
       __typename
     }
   }
-`;
+`
 export const deleteReport = /* GraphQL */ `
   mutation DeleteReport(
     $input: DeleteReportInput!
@@ -246,7 +246,7 @@ export const deleteReport = /* GraphQL */ `
       __typename
     }
   }
-`;
+`
 export const createOpinion = /* GraphQL */ `
   mutation CreateOpinion(
     $input: CreateOpinionInput!
@@ -266,7 +266,7 @@ export const createOpinion = /* GraphQL */ `
       __typename
     }
   }
-`;
+`
 export const updateOpinion = /* GraphQL */ `
   mutation UpdateOpinion(
     $input: UpdateOpinionInput!
@@ -286,7 +286,7 @@ export const updateOpinion = /* GraphQL */ `
       __typename
     }
   }
-`;
+`
 export const deleteOpinion = /* GraphQL */ `
   mutation DeleteOpinion(
     $input: DeleteOpinionInput!
@@ -306,7 +306,7 @@ export const deleteOpinion = /* GraphQL */ `
       __typename
     }
   }
-`;
+`
 export const createNewQuestion = /* GraphQL */ `
   mutation CreateNewQuestion(
     $input: CreateNewQuestionInput!
@@ -329,7 +329,7 @@ export const createNewQuestion = /* GraphQL */ `
       __typename
     }
   }
-`;
+`
 export const updateNewQuestion = /* GraphQL */ `
   mutation UpdateNewQuestion(
     $input: UpdateNewQuestionInput!
@@ -352,7 +352,7 @@ export const updateNewQuestion = /* GraphQL */ `
       __typename
     }
   }
-`;
+`
 export const deleteNewQuestion = /* GraphQL */ `
   mutation DeleteNewQuestion(
     $input: DeleteNewQuestionInput!
@@ -375,4 +375,4 @@ export const deleteNewQuestion = /* GraphQL */ `
       __typename
     }
   }
-`;
+`

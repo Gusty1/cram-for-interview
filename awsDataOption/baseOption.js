@@ -12,16 +12,16 @@ export function IUDOption () {
   return new Promise((resolve, reject) => {
     // 新增、修改、刪除範例，注意用法不同引入的模型也需要替換
     API.graphql(
-      graphqlOperation(createQuestion, {
+      graphqlOperation(createSubject, {
         input: {
-          subtitle: 'Spring',
-          question: '介紹 Spring Bean 的生命週期',
-          answer: '',
-          count: 0,
+          subject: 'design',
+          subject_zh: '設計',
+          //answer: '',
+          //count: 0,
           show: true,
-          order: 3,
+          //order: 3,
           createDate: moment().format('YYYY/MM/DD HH:mm:ss (dd)'),
-          updateDate: moment().format('YYYY/MM/DD HH:mm:ss (dd)'),
+          updateDate: '',
           remark: '',
         },
       })
