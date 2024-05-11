@@ -5,7 +5,7 @@ const BASE_URL = '../assets/images/subtitles/'
   這是副標題icon的圖片
 */
 export default {
-  Java: require(`${BASE_URL}java.png`),
-  Spring: require(`${BASE_URL}spring.png`),
-  SQL: require(`${BASE_URL}SQL.png`),
+    Java: require(`${BASE_URL}java.png`),
+    Spring: require(`${BASE_URL}spring.png`),
+    SQL: require(`${BASE_URL}SQL.png`),
 }
