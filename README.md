@@ -16,8 +16,8 @@
 
 目前資料正在緩慢增加中，歡迎各行各業提供相關資料，也歡迎大家提供改進意見。
 
-## 技術
-- React Native、
+## 使用技術
+- React Native
 - Redux
 - Sqlite
 - Amazon DynamoDB
