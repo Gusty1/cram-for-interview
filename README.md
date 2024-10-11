@@ -16,6 +16,12 @@
 
 目前資料正在緩慢增加中，歡迎各行各業提供相關資料，也歡迎大家提供改進意見。
 
+## 技術
+- React Native、
+- Redux
+- Sqlite
+- Amazon DynamoDB
+
 ## 畫面截圖
 
 ![首頁](./images/1.jpg '首頁')
