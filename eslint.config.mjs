@@ -1,40 +1,39 @@
-import eslintPluginReact from 'eslint-plugin-react';
-import eslintPluginReactNative from 'eslint-plugin-react-native';
-import eslintPluginPrettier from 'eslint-plugin-prettier';
-import babelParser from '@babel/eslint-parser';
+import eslintPluginReact from "eslint-plugin-react";
+import eslintPluginReactNative from "eslint-plugin-react-native";
+import eslintPluginPrettier from "eslint-plugin-prettier";
+import babelParser from "@babel/eslint-parser";
 
 export default [
   {
     languageOptions: {
       ecmaVersion: 2021,
-      sourceType: 'module',
+      sourceType: "module",
       globals: {
         browser: true,
         node: true,
-        'react-native/react-native': true,
+        "react-native/react-native": true,
       },
       parser: babelParser,
       parserOptions: {
         requireConfigFile: false,
         babelOptions: {
-          presets: ['@babel/preset-react'],
+          presets: ["@babel/preset-react"],
         },
       },
     },
     plugins: {
       react: eslintPluginReact,
-      'react-native': eslintPluginReactNative,
+      "react-native": eslintPluginReactNative,
       prettier: eslintPluginPrettier,
     },
     rules: {
-      'react/prop-types': 'off',
-      'react/react-in-jsx-scope': 'off',
-      'react-native/no-inline-styles': 'off',
-      quotes: ['error', 'single'],
+      "react/prop-types": "off",
+      "react/react-in-jsx-scope": "off",
+      "react-native/no-inline-styles": "off",
     },
     settings: {
       react: {
-        version: 'detect',
+        version: "detect",
       },
     },
   },

@@ -1,1 +1,1 @@
-export { initSetting } from './setting/setting';
+export { initSetting } from "./setting/setting";

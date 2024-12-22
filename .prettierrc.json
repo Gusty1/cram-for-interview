@@ -1,34 +1,14 @@
 {
-  // 使用單引號，而不是雙引號
-  "singleQuote": true,
-
-  // 設定最大行寬（80個字符），以便更易讀和維護程式碼
+  "singleQuote": false,
   "printWidth": 80,
-
-  // 自動添加分號
   "semi": true,
-
-  // 物件的屬性名稱如果是多行，是否要添加尾逗號（"always"表示總是添加，"never"表示從不添加）
   "trailingComma": "es5",
-
-  // 是否使用tab代替空格，設定為true會使用tab
   "useTabs": false,
-
-  // 每個縮排的空格數，設定為2表示每次縮排2個空格
   "tabWidth": 2,
-
-  // 是否在 JSX 中使用括號
   "jsxBracketSameLine": false,
-
-  // 在檔案的結尾自動插入一個換行符
   "endOfLine": "lf",
-
-  // 是否格式化字串中的註解內容
   "arrowParens": "always",
-
-  // 禁用對程式碼進行空格的自動調整，避免多餘的空格
   "noWhitespace": true,
-
-  // 設定 HTML 空白字元敏感度，"css" 會讓空白處理遵循 CSS 規則
-  "htmlWhitespaceSensitivity": "css"
+  "htmlWhitespaceSensitivity": "css",
+  "spaceBeforeFunctionParen": true
 }

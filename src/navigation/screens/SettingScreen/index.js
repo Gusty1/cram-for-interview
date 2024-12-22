@@ -1,8 +1,8 @@
-import { View } from 'react-native';
-import { Switch, Text } from 'react-native-paper';
-import useStore from '../../../store';
-import { MyMainView } from '../../../components';
-import { settingStyle } from '../../../styles';
+import { View } from "react-native";
+import { Switch, Text } from "react-native-paper";
+import useStore from "../../../store";
+import { MyMainView } from "../../../components";
+import { settingStyle } from "../../../styles";
 
 const SettingScreen = () => {
   const { setting, setSetting } = useStore();
@@ -16,7 +16,7 @@ const SettingScreen = () => {
   return (
     <MyMainView>
       <View style={settingStyle.settingRow}>
-        <Text style={{flex:0.4}}>黑暗模式</Text>
+        <Text style={{ flex: 0.4 }}>黑暗模式</Text>
         <Switch
           value={setting && setting.darkMode}
           onValueChange={onToggleDarkSwitch}

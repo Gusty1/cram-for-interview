@@ -1,1 +1,1 @@
-export { default as MyMainView } from './MyComponents/MyMainView';
+export { default as MyMainView } from "./MyComponents/MyMainView";

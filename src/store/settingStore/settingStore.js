@@ -1,5 +1,5 @@
-import { getSettingData, setSettingData } from '../../services';
-import { initSetting } from '../../constants';
+import { getSettingData, setSettingData } from "../../services";
+import { initSetting } from "../../constants";
 
 // 設定狀態管理
 export default (set) => {

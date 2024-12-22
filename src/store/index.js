@@ -1,5 +1,5 @@
-import { create } from 'zustand';
-import { default as useSettingStore } from './settingStore/settingStore';
+import { create } from "zustand";
+import { default as useSettingStore } from "./settingStore/settingStore";
 
 const useStore = create((...set) => {
   return {

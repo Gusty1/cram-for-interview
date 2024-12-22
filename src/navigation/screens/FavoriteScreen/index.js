@@ -1,6 +1,6 @@
 // import { View } from "react-native";
-import { Text } from 'react-native-paper';
-import { MyMainView } from '../../../components';
+import { Text } from "react-native-paper";
+import { MyMainView } from "../../../components";
 
 const FavoriteScreen = ({ navigation }) => {
   return (
