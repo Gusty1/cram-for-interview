@@ -12,6 +12,7 @@ import useStore from "../store/index";
 import HomeScreen from "./screens/HomeScreen";
 import FavoriteScreen from "./screens/FavoriteScreen";
 import SettingScreen from "./screens/SettingScreen";
+import { navigationSetting } from "../constants/";
 
 const { LightTheme } = adaptNavigationTheme({
   reactNavigationLight: MD3LightTheme,
@@ -69,10 +70,8 @@ const BottomTabs = () => {
         name="HomeTab"
         component={HomeStack}
         options={{
-          headerShown: true,
+          ...navigationSetting,
           headerTitle: "面試抱佛腳",
-          title: "首頁",
-          headerTitleAlign: "center",
           tabBarIcon: ({ color, size }) => (
             <Entypo name="home" size={size} color={color} />
           ),
@@ -82,9 +81,8 @@ const BottomTabs = () => {
         name="FavoriteTab"
         component={FavoriteStack}
         options={{
-          headerShown: true,
-          title: "收藏",
-          headerTitleAlign: "center",
+          ...navigationSetting,
+          headerTitle: "收藏",
           tabBarIcon: ({ color, size }) => (
             <AntDesign name="heart" size={size} color={color} />
           ),
@@ -94,9 +92,8 @@ const BottomTabs = () => {
         name="SettingTab"
         component={SettingStack}
         options={{
-          headerShown: true,
-          title: "設定",
-          headerTitleAlign: "center",
+          ...navigationSetting,
+          headerTitle: "設定",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="settings-sharp" size={size} color={color} />
           ),
@@ -108,10 +105,13 @@ const BottomTabs = () => {
 
 const AppNavigator = () => {
   const { setting, getSetting } = useStore();
-  if (!setting) getSetting();
-  let theme = {};
-  if (setting && setting.darkMode) theme = DarkTheme;
-  else theme = LightTheme;
+
+  if (!setting) {
+    getSetting();
+    return null; // 等待 setting 初始化時延遲渲染
+  }
+
+  const theme = setting.darkMode ? DarkTheme : LightTheme;
 
   return (
     <PaperProvider theme={theme}>

@@ -1,19 +1,12 @@
-import { View } from "react-native";
+// import { View } from "react-native";
 import { Text } from "react-native-paper";
-import { MyMainView } from "../../../components";
+import { MyMainView, Sentence, Subject } from "../../../components";
 
 const HomeScreen = ({ navigation }) => {
   return (
     <MyMainView>
-      <View
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "space-center",
-        }}
-      >
-        <Text>我是首頁</Text>
-      </View>
+      <Sentence />
+      <Subject />
     </MyMainView>
   );
 };

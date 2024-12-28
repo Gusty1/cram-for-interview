@@ -13,6 +13,7 @@ const SettingScreen = () => {
       darkMode: !setting.darkMode,
     });
   };
+  
   return (
     <MyMainView>
       <View style={settingStyle.settingRow}>
