@@ -12,4 +12,26 @@ export default StyleSheet.create({
     paddingLeft: 10,
     paddingRight: 10,
   },
+  //沒有網路modal的容器
+  noErrModalContainer: {
+    flex: 1,
+    backgroundColor: "lightgray",
+    paddingHorizontal: 30,
+    paddingVertical: 20,
+    marginHorizontal: 30,
+    marginVertical: 70,
+    borderRadius: 10,
+  },
+  //沒有網路modal的顯示文字
+  noNetText: {
+    fontSize: 18,
+    color: "red",
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  defaultLoading: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
 });

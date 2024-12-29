@@ -21,4 +21,11 @@ export default StyleSheet.create({
     flexWrap: "nowrap",
     gap: 5,
   },
+  //主題卡片的容器
+  cardContainer: {
+    flex: 1,
+    marginVertical: -10,
+    height: 150,
+    backgroundColor: "transparent",
+  },
 });

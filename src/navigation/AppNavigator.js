@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -8,8 +9,10 @@ import {
   adaptNavigationTheme,
   PaperProvider,
 } from "react-native-paper";
+import { NoNetModal } from "../components";
 import useStore from "../store/index";
-import HomeScreen from "./screens/HomeScreen";
+import SubjectScreen from "./screens/HomeScreen/SubjectScreen";
+import SubtitleScreen from "./screens/HomeScreen/SubtitleScreen";
 import FavoriteScreen from "./screens/FavoriteScreen";
 import SettingScreen from "./screens/SettingScreen";
 import { navigationSetting } from "../constants/";
@@ -27,11 +30,34 @@ const Stack = createNativeStackNavigator();
 // Stack Navigator for Home
 const HomeStack = () => {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator initialRouteName="SubjectScreen">
       <Stack.Screen
-        name="HomeScreen"
-        component={HomeScreen}
-        options={{ headerShown: false }}
+        name="SubjectScreen"
+        component={SubjectScreen}
+        options={({ route }) => {
+          return {
+            ...navigationSetting,
+            headerTitle: "面試抱佛腳",
+            headerShown: true,
+            tabBarIcon: ({ color, size }) => (
+              <Entypo name="home" size={size} color={color} />
+            ),
+          };
+        }}
+      />
+
+      <Stack.Screen
+        name="SubtitleScreen"
+        component={SubtitleScreen}
+        options={({ route }) => {
+          return {
+            ...navigationSetting,
+            headerTitle: route.params.subjectZH,
+            tabBarIcon: ({ color, size }) => (
+              <Entypo name="home" size={size} color={color} />
+            ),
+          };
+        }}
       />
     </Stack.Navigator>
   );
@@ -44,7 +70,15 @@ const FavoriteStack = () => {
       <Stack.Screen
         name="FavoriteScreen"
         component={FavoriteScreen}
-        options={{ headerShown: false }}
+        options={({ route }) => {
+          return {
+            ...navigationSetting,
+            headerTitle: "我的收藏",
+            tabBarIcon: ({ color, size }) => (
+              <AntDesign name="heart" size={size} color={color} />
+            ),
+          };
+        }}
       />
     </Stack.Navigator>
   );
@@ -56,7 +90,15 @@ const SettingStack = () => {
       <Stack.Screen
         name="SettingScreen"
         component={SettingScreen}
-        options={{ headerShown: false }}
+        options={({ route }) => {
+          return {
+            ...navigationSetting,
+            headerTitle: "設定",
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name="settings-sharp" size={size} color={color} />
+            ),
+          };
+        }}
       />
     </Stack.Navigator>
   );
@@ -71,7 +113,7 @@ const BottomTabs = () => {
         component={HomeStack}
         options={{
           ...navigationSetting,
-          headerTitle: "面試抱佛腳",
+          headerShown: false,
           tabBarIcon: ({ color, size }) => (
             <Entypo name="home" size={size} color={color} />
           ),
@@ -82,7 +124,7 @@ const BottomTabs = () => {
         component={FavoriteStack}
         options={{
           ...navigationSetting,
-          headerTitle: "收藏",
+          headerShown: false,
           tabBarIcon: ({ color, size }) => (
             <AntDesign name="heart" size={size} color={color} />
           ),
@@ -93,7 +135,7 @@ const BottomTabs = () => {
         component={SettingStack}
         options={{
           ...navigationSetting,
-          headerTitle: "設定",
+          headerShown: false,
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="settings-sharp" size={size} color={color} />
           ),
@@ -104,7 +146,10 @@ const BottomTabs = () => {
 };
 
 const AppNavigator = () => {
-  const { setting, getSetting } = useStore();
+  const { setting, getSetting, isConnected, initNetworkListener } = useStore();
+  useEffect(() => {
+    initNetworkListener(); // 啟動網路監聽
+  }, [initNetworkListener]);
 
   if (!setting) {
     getSetting();
@@ -115,9 +160,13 @@ const AppNavigator = () => {
 
   return (
     <PaperProvider theme={theme}>
-      <NavigationContainer theme={theme}>
-        <BottomTabs />
-      </NavigationContainer>
+      {isConnected ? (
+        <NavigationContainer theme={theme}>
+          <BottomTabs />
+        </NavigationContainer>
+      ) : (
+        <NoNetModal />
+      )}
     </PaperProvider>
   );
 };
