@@ -118,7 +118,6 @@ export const createQuestion = /* GraphQL */ `
       answer
       enable
       useful
-      read
       createdAt
       updatedAt
       __typename
@@ -137,7 +136,6 @@ export const updateQuestion = /* GraphQL */ `
       answer
       enable
       useful
-      read
       createdAt
       updatedAt
       __typename
@@ -156,7 +154,108 @@ export const deleteQuestion = /* GraphQL */ `
       answer
       enable
       useful
-      read
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const createBugReport = /* GraphQL */ `
+  mutation CreateBugReport(
+    $input: CreateBugReportInput!
+    $condition: ModelBugReportConditionInput
+  ) {
+    createBugReport(input: $input, condition: $condition) {
+      id
+      questionID
+      email
+      fixContent
+      status
+      result
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const updateBugReport = /* GraphQL */ `
+  mutation UpdateBugReport(
+    $input: UpdateBugReportInput!
+    $condition: ModelBugReportConditionInput
+  ) {
+    updateBugReport(input: $input, condition: $condition) {
+      id
+      questionID
+      email
+      fixContent
+      status
+      result
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const deleteBugReport = /* GraphQL */ `
+  mutation DeleteBugReport(
+    $input: DeleteBugReportInput!
+    $condition: ModelBugReportConditionInput
+  ) {
+    deleteBugReport(input: $input, condition: $condition) {
+      id
+      questionID
+      email
+      fixContent
+      status
+      result
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const createMaintain = /* GraphQL */ `
+  mutation CreateMaintain(
+    $input: CreateMaintainInput!
+    $condition: ModelMaintainConditionInput
+  ) {
+    createMaintain(input: $input, condition: $condition) {
+      id
+      finishDate
+      showText
+      remark
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const updateMaintain = /* GraphQL */ `
+  mutation UpdateMaintain(
+    $input: UpdateMaintainInput!
+    $condition: ModelMaintainConditionInput
+  ) {
+    updateMaintain(input: $input, condition: $condition) {
+      id
+      finishDate
+      showText
+      remark
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const deleteMaintain = /* GraphQL */ `
+  mutation DeleteMaintain(
+    $input: DeleteMaintainInput!
+    $condition: ModelMaintainConditionInput
+  ) {
+    deleteMaintain(input: $input, condition: $condition) {
+      id
+      finishDate
+      showText
+      remark
       createdAt
       updatedAt
       __typename

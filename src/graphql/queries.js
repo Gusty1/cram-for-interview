@@ -84,7 +84,6 @@ export const getQuestion = /* GraphQL */ `
       answer
       enable
       useful
-      read
       createdAt
       updatedAt
       __typename
@@ -105,7 +104,78 @@ export const listQuestions = /* GraphQL */ `
         answer
         enable
         useful
-        read
+        createdAt
+        updatedAt
+        __typename
+      }
+      nextToken
+      __typename
+    }
+  }
+`;
+export const getBugReport = /* GraphQL */ `
+  query GetBugReport($id: ID!) {
+    getBugReport(id: $id) {
+      id
+      questionID
+      email
+      fixContent
+      status
+      result
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const listBugReports = /* GraphQL */ `
+  query ListBugReports(
+    $filter: ModelBugReportFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listBugReports(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        id
+        questionID
+        email
+        fixContent
+        status
+        result
+        createdAt
+        updatedAt
+        __typename
+      }
+      nextToken
+      __typename
+    }
+  }
+`;
+export const getMaintain = /* GraphQL */ `
+  query GetMaintain($id: ID!) {
+    getMaintain(id: $id) {
+      id
+      finishDate
+      showText
+      remark
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const listMaintains = /* GraphQL */ `
+  query ListMaintains(
+    $filter: ModelMaintainFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listMaintains(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        id
+        finishDate
+        showText
+        remark
         createdAt
         updatedAt
         __typename

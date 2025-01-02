@@ -1,4 +1,4 @@
-import { MyMainView, Sentence, Subject } from "../../../../components";
+import { MyMainView, Sentence, Subject } from '../../../../components'
 
 const SubjectScreen = ({navigation}) => {
   return (
@@ -9,4 +9,4 @@ const SubjectScreen = ({navigation}) => {
   );
 };
 
-export default SubjectScreen;
+export default SubjectScreen

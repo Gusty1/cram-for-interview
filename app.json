@@ -32,6 +32,13 @@
             "node_modules/@expo-google-fonts/noto-sans-tc/NotoSansTC-Black.ttf"
           ]
         }
+      ],
+      [
+        "expo-sqlite",
+        {
+          "enableFTS": true,
+          "useSQLCipher": true
+        }
       ]
     ]
   }

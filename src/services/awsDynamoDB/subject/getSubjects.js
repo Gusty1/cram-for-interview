@@ -1,5 +1,5 @@
-import { API, graphqlOperation } from "aws-amplify";
-import { listSubjects } from "../../../graphql/queries";
+import { API, graphqlOperation } from 'aws-amplify'
+import { listSubjects } from '../../../graphql/queries'
 
 const getSubjects = async () => {
   try {
@@ -7,16 +7,16 @@ const getSubjects = async () => {
       graphqlOperation(listSubjects, {
         filter: {
           enable: {
-            eq: true,
-          },
-        },
-      }),
-    );
+            eq: true
+          }
+        }
+      })
+    )
     return result.data.listSubjects.items;
   } catch (error) {
-    console.error("getSubjects error:　", error);
-    return [];
+    console.error('getSubjects error:　', error)
+    return []
   }
-};
+}
 
-export default getSubjects;
+export default getSubjects

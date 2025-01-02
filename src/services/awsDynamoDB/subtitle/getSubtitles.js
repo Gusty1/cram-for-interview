@@ -1,5 +1,5 @@
-import { API, graphqlOperation } from "aws-amplify";
-import { listSubtitles } from "../../../graphql/queries";
+import { API, graphqlOperation } from 'aws-amplify'
+import { listSubtitles } from '../../../graphql/queries'
 
 const getSubtitles = async (subject) => {
   try {
@@ -7,19 +7,19 @@ const getSubtitles = async (subject) => {
       graphqlOperation(listSubtitles, {
         filter: {
           enable: {
-            eq: true,
+            eq: true
           },
           subject: {
             eq: subject,
-          },
-        },
-      }),
-    );
-    return result.data.listSubtitles.items;
+          }
+        }
+      })
+    )
+    return result.data.listSubtitles.items
   } catch (error) {
-    console.error("getSubtitles error:　", error);
-    return [];
+    console.error('getSubtitles error:　', error)
+    return []
   }
-};
+}
 
-export default getSubtitles;
+export default getSubtitles

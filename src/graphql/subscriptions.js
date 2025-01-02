@@ -97,7 +97,6 @@ export const onCreateQuestion = /* GraphQL */ `
       answer
       enable
       useful
-      read
       createdAt
       updatedAt
       __typename
@@ -113,7 +112,6 @@ export const onUpdateQuestion = /* GraphQL */ `
       answer
       enable
       useful
-      read
       createdAt
       updatedAt
       __typename
@@ -129,7 +127,96 @@ export const onDeleteQuestion = /* GraphQL */ `
       answer
       enable
       useful
-      read
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const onCreateBugReport = /* GraphQL */ `
+  subscription OnCreateBugReport(
+    $filter: ModelSubscriptionBugReportFilterInput
+  ) {
+    onCreateBugReport(filter: $filter) {
+      id
+      questionID
+      email
+      fixContent
+      status
+      result
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const onUpdateBugReport = /* GraphQL */ `
+  subscription OnUpdateBugReport(
+    $filter: ModelSubscriptionBugReportFilterInput
+  ) {
+    onUpdateBugReport(filter: $filter) {
+      id
+      questionID
+      email
+      fixContent
+      status
+      result
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const onDeleteBugReport = /* GraphQL */ `
+  subscription OnDeleteBugReport(
+    $filter: ModelSubscriptionBugReportFilterInput
+  ) {
+    onDeleteBugReport(filter: $filter) {
+      id
+      questionID
+      email
+      fixContent
+      status
+      result
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const onCreateMaintain = /* GraphQL */ `
+  subscription OnCreateMaintain($filter: ModelSubscriptionMaintainFilterInput) {
+    onCreateMaintain(filter: $filter) {
+      id
+      finishDate
+      showText
+      remark
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const onUpdateMaintain = /* GraphQL */ `
+  subscription OnUpdateMaintain($filter: ModelSubscriptionMaintainFilterInput) {
+    onUpdateMaintain(filter: $filter) {
+      id
+      finishDate
+      showText
+      remark
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const onDeleteMaintain = /* GraphQL */ `
+  subscription OnDeleteMaintain($filter: ModelSubscriptionMaintainFilterInput) {
+    onDeleteMaintain(filter: $filter) {
+      id
+      finishDate
+      showText
+      remark
       createdAt
       updatedAt
       __typename

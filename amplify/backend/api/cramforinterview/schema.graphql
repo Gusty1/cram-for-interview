@@ -26,5 +26,20 @@ type Question @model {
   answer: String
   enable: Boolean
   useful: Int
-  read: Int
+}
+
+type BugReport @model {
+  id: ID!
+  questionID: String!
+  email: String
+  fixContent: String!
+  status: String
+  result: String
+}
+
+type Maintain @model {
+  id: ID!
+  finishDate: String
+  showText: String
+  remark: String
 }
