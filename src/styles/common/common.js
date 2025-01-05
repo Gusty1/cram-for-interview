@@ -11,6 +11,7 @@ export default StyleSheet.create({
     marginTop: 10,
     paddingLeft: 10,
     paddingRight: 10,
+    marginBottom: 10
   },
   //沒有網路modal的容器
   noErrModalContainer: {
@@ -42,4 +43,10 @@ export default StyleSheet.create({
     right: 20,
   },
   questionActionBtnSize: 24,
+  //沒有資料的文字樣式
+  noDataMsg: {
+    textAlign: 'center',
+    fontSize: 24,
+    color: 'orange'
+  }
 })

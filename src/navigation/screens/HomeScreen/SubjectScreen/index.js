@@ -6,7 +6,7 @@ const SubjectScreen = ({navigation}) => {
       <Sentence />
       <Subject navigation={navigation} />
     </MyMainView>
-  );
-};
+  )
+}
 
 export default SubjectScreen

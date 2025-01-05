@@ -5,18 +5,16 @@ import useStore from '../../store'
 import MyText from '../MyComponents/MyText'
 import { homeStyle } from '../../styles'
 
+//子項目的過濾modal
 const SubtitleFilterModal = ({ filterModalShow, filterSubtile, showSubtitleItems }) => {
   const [subtitlesItems, setSubtitlesItems] = useState([])
   const { setting } = useStore()
 
-  //切換選種狀態
+  //切換選中狀態
   const changeSelected = (id) => {
     if (!id) {
       setSubtitlesItems(
-        subtitlesItems.map((item) => {
-          item.selected = false
-          return item
-        })
+        subtitlesItems.map((item) => ({ ...item, selected: false }))
       )
     } else {
       setSubtitlesItems(
@@ -38,7 +36,7 @@ const SubtitleFilterModal = ({ filterModalShow, filterSubtile, showSubtitleItems
       <Modal
         visible={filterModalShow}
         dismissable={true}
-        onDismiss={() => filterSubtile()}
+        onDismiss={() => filterSubtile(subtitlesItems)}
         dismissableBackButton={true}
         contentContainerStyle={{
           ...homeStyle.subtitleFilterModalContainer,
@@ -47,10 +45,12 @@ const SubtitleFilterModal = ({ filterModalShow, filterSubtile, showSubtitleItems
       >
         <View style={homeStyle.subtitleFilterModalMainView}>
           <MyText style={{ flex: 1 }}>
-            選擇要顯示的項目:
+            選擇要顯示的項目：
           </MyText>
           <Button mode='contained-tonal' onPress={() => changeSelected()}>
-            重置
+            <MyText>
+              重置
+            </MyText>
           </Button>
         </View>
         <View style={homeStyle.subtitleFilterModalChipView}>

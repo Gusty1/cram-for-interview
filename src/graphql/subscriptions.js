@@ -184,11 +184,75 @@ export const onDeleteBugReport = /* GraphQL */ `
     }
   }
 `;
+export const onCreateNewQuestion = /* GraphQL */ `
+  subscription OnCreateNewQuestion(
+    $filter: ModelSubscriptionNewQuestionFilterInput
+  ) {
+    onCreateNewQuestion(filter: $filter) {
+      id
+      username
+      email
+      subject
+      subtitle
+      question
+      answer
+      images
+      status
+      result
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const onUpdateNewQuestion = /* GraphQL */ `
+  subscription OnUpdateNewQuestion(
+    $filter: ModelSubscriptionNewQuestionFilterInput
+  ) {
+    onUpdateNewQuestion(filter: $filter) {
+      id
+      username
+      email
+      subject
+      subtitle
+      question
+      answer
+      images
+      status
+      result
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const onDeleteNewQuestion = /* GraphQL */ `
+  subscription OnDeleteNewQuestion(
+    $filter: ModelSubscriptionNewQuestionFilterInput
+  ) {
+    onDeleteNewQuestion(filter: $filter) {
+      id
+      username
+      email
+      subject
+      subtitle
+      question
+      answer
+      images
+      status
+      result
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
 export const onCreateMaintain = /* GraphQL */ `
   subscription OnCreateMaintain($filter: ModelSubscriptionMaintainFilterInput) {
     onCreateMaintain(filter: $filter) {
       id
-      finishDate
+      endDate
+      show
       showText
       remark
       createdAt
@@ -201,7 +265,8 @@ export const onUpdateMaintain = /* GraphQL */ `
   subscription OnUpdateMaintain($filter: ModelSubscriptionMaintainFilterInput) {
     onUpdateMaintain(filter: $filter) {
       id
-      finishDate
+      endDate
+      show
       showText
       remark
       createdAt
@@ -214,7 +279,8 @@ export const onDeleteMaintain = /* GraphQL */ `
   subscription OnDeleteMaintain($filter: ModelSubscriptionMaintainFilterInput) {
     onDeleteMaintain(filter: $filter) {
       id
-      finishDate
+      endDate
+      show
       showText
       remark
       createdAt

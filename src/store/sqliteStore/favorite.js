@@ -4,8 +4,8 @@ import { getAllFavorite, insertFavorite, deleteFavorite } from '../../services'
 export default (set) => {
   return {
     favoriteList: null,
-    addFavorite: async (subtitle, questionID) => {
-      await insertFavorite(subtitle, questionID)
+    addFavorite: async (subtitle, subtitleShow, subject, questionID) => {
+      await insertFavorite(subtitle, subtitleShow, subject, questionID)
       const result = await getAllFavorite()
       set({ favoriteList: [...result] })
     },

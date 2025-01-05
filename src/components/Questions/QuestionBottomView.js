@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect, useCallback } from 'react'
 import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet'
-import { ScrollView, View } from 'react-native'
+import { ScrollView, View, Alert } from 'react-native'
 import { TextInput, HelperText, Button } from 'react-native-paper'
 import Slider from '@react-native-community/slider'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
@@ -8,7 +8,9 @@ import MyText from '../MyComponents/MyText'
 import useStore from '../../store'
 import { addBugReport } from '../../services'
 import { questionStyle } from '../../styles'
+import { defaultSetting } from '../../constants'
 
+//問題頁的底部view，放字體調整、問題回報
 const sendReport = async (questionID, sendData, setSendError, bottomSheetRef, setShowSnackBar) => {
   try {
     if (!sendData.fixContent.trim()) {
@@ -17,14 +19,17 @@ const sendReport = async (questionID, sendData, setSendError, bottomSheetRef, se
     }
     await addBugReport({
       questionID,
-      ...sendData
+      ...sendData,
+      status: '',
+      result: ''
     });
     bottomSheetRef.current.close()
     setShowSnackBar('感謝回報')
   } catch (e) {
+    Alert(defaultSetting.errMsg)
     console.error('sendReport err: ', e)
   }
-};
+}
 
 const QuestionBottomView = ({ setShowSnackBar, showBottomView, setShowBottomView, questionID }) => {
   const bottomSheetRef = useRef(null)
@@ -94,7 +99,7 @@ const QuestionBottomView = ({ setShowSnackBar, showBottomView, setShowBottomView
             <ScrollView style={questionStyle.contentStyle}>
               <TextInput
                 mode='outlined'
-                label='電子郵件'
+                label={<MyText>電子郵件</MyText>}
                 value={sendData.email}
                 onChangeText={(text) =>
                   setSendData({ ...sendData, email: text })
@@ -102,11 +107,11 @@ const QuestionBottomView = ({ setShowSnackBar, showBottomView, setShowBottomView
                 style={{ flex: 1 }}
               />
               <HelperText type='info' visible={true}>
-                如果願意可以輸入電子郵件，方便我與您確認
+                <MyText>如果願意可以輸入電子郵件，方便我與您確認</MyText>
               </HelperText>
               <TextInput
                 mode='outlined'
-                label='錯誤內容'
+                label={<MyText>錯誤內容</MyText>}
                 placeholder='可以貼網址，只要有辦法可以說明錯誤就好'
                 value={sendData.fixContent}
                 onChangeText={(text) =>
@@ -116,14 +121,14 @@ const QuestionBottomView = ({ setShowSnackBar, showBottomView, setShowBottomView
                 multiline={true}
               />
               <HelperText type='error' visible={sendError}>
-                請輸入錯誤內容
+                <MyText>請輸入錯誤內容</MyText>
               </HelperText>
               <View style={{ marginTop: 5, alignSelf: 'flex-start' }}>
                 <Button
                   mode='contained-tonal'
-                  onPress={() =>sendReport( questionID,sendData,setSendError,bottomSheetRef,setShowSnackBar)}
+                  onPress={() => sendReport(questionID, sendData, setSendError, bottomSheetRef, setShowSnackBar)}
                 >
-                  送出
+                  <MyText>送出</MyText>
                 </Button>
               </View>
             </ScrollView>

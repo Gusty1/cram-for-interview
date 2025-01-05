@@ -4,6 +4,7 @@ import { Card } from 'react-native-paper'
 import MyText from '../MyComponents/MyText'
 import { homeStyle } from '../../styles'
 
+//主題卡片
 const SubjectCard = ({ subjectObj, navigation }) => {
   const { zh_name, en_name, image } = subjectObj
   const [error, setError] = useState(false)

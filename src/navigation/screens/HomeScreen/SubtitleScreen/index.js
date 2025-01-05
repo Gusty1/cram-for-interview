@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react'
-import { View, FlatList } from 'react-native'
-import { ActivityIndicator, IconButton } from 'react-native-paper'
+import { View, Alert } from 'react-native'
+import { ActivityIndicator, IconButton, HelperText } from 'react-native-paper'
+import DragList from 'react-native-draglist';
 import uuid from 'react-native-uuid'
 import { SubtitleList, MyText, SubtitleFilterModal } from '../../../../components'
-import { getSubtitles, getQuestions } from '../../../../services'
+import { getSubtitles, getQuestions, getSubtitleSort, insertSubtitleSort } from '../../../../services'
 import { commonStyle } from '../../../../styles'
+import { defaultSetting } from '../../../../constants'
 import useStore from '../../../../store'
 
 //取得全部資料，並設定給originSubtitleList保存，這樣以後設定就不會重新query
@@ -20,14 +22,32 @@ const getSubtitleList = async (setLoading, setSubtitleList, setOriginSubtitleLis
         return { ...item, questions: question }
       })
     )
-    subtitles.sort((a, b) => a.en_name.localeCompare(b.en_name))
+    //如果本地有排序紀錄，照本的排序，沒有就照名字排
+    const sortList = await getSubtitleSort(subjectEN)
+    if (sortList && sortList.length > 0) subtitles = disposeSort(subtitles, sortList)
+    else subtitles.sort((a, b) => a.en_name.localeCompare(b.en_name))
     setSubtitleList(subtitles)
     setOriginSubtitleList(subtitles)
   } catch (e) {
+    Alert(defaultSetting.errMsg)
     console.error('getSubtitleList error: ', e)
   } finally {
     setLoading(false);
   }
+}
+
+//處理預設排序，順序對得上就照指定順序排，對不上就排在最後面
+const disposeSort = (subtitles, sortList) => {
+  const ary = JSON.parse(sortList[0].subtitleJsonAry)
+  const result = ary.map(item => {
+    const foundObj = subtitles.find(obj => obj.en_name === item.subtitle);
+    // 如果找到則返回對象，否則返回null
+    return foundObj ? { ...foundObj, sort: item.sort } : null;
+  })
+    .filter(Boolean)  // 過濾掉null值
+    .sort((a, b) => a.sort - b.sort); // 根據sort排序
+
+  return result
 }
 
 const SubtitleScreen = ({ navigation, route }) => {
@@ -51,12 +71,10 @@ const SubtitleScreen = ({ navigation, route }) => {
       if (subtitleList.length === 0) return;
       const addFavSubtitleList = subtitleList.map((item) => {
         item.questions = item.questions.map((x) => {
-          if (favoriteList && favoriteList.some((y) => y.questionID === x.id)) {
-            x.favorite = true
-          } else {
-            x.favorite = false
+          return {
+            ...x,
+            favorite: favoriteList?.some((y) => y.questionID === x.id) || false,
           }
-          return x
         })
         return item
       })
@@ -66,14 +84,14 @@ const SubtitleScreen = ({ navigation, route }) => {
   }, [favoriteList, originSubtitleList])
 
   //過濾副主題並關閉modal
-  const filterSubtile = () => {
+  const filterSubtile = (changeSubtitleItems) => {
     //如果沒有選副主題就顯示全部
-    if (showSubtitleItems.length > 0 && !showSubtitleItems.some((item) => item.selected)) {
+    if (showSubtitleItems.length > 0 && !changeSubtitleItems.some((item) => item.selected)) {
       setSubtitleList(originSubtitleList)
     } else {
       setSubtitleList(
         originSubtitleList.filter((item) => {
-          if (showSubtitleItems.length > 0 && showSubtitleItems.some((x) => x.en_name === item.en_name && x.selected)) {
+          if (showSubtitleItems.length > 0 && changeSubtitleItems.some((x) => x.en_name === item.en_name && x.selected)) {
             return true
           } else {
             return false
@@ -98,41 +116,79 @@ const SubtitleScreen = ({ navigation, route }) => {
     )
   }, [originSubtitleList])
 
+  //拖曳的組件渲染，補上拖曳方法
+  const renderItem = ({ item, onDragStart, onDragEnd }) => {
+    return (
+      <SubtitleList
+        navigation={navigation}
+        subtitle={item}
+        onDragStart={onDragStart}
+        onDragEnd={onDragEnd}
+        subjectEN={subjectEN}
+      />
+    )
+  }
+
+  //移動後的回調方法，就是位置的切換
+  const onReordered = (fromIndex, toIndex) => {
+    //拖曳的時候不知為啥有時index會超出範圍，這工具有bug阿，所以增加判斷
+    if (fromIndex < 0 || fromIndex > subtitleList.length - 1 ||
+      toIndex < 0 || toIndex > subtitleList.length - 1) return
+
+    const changeSubtileList = [...subtitleList]
+    const temp = changeSubtileList[fromIndex]
+    changeSubtileList[fromIndex] = changeSubtileList[toIndex]
+    changeSubtileList[toIndex] = temp
+    setSubtitleList(changeSubtileList)
+    //寫入移動後的位置
+    if (subtitleList && subtitleList.length > 0) {
+      insertSubtitleSort(subjectEN, JSON.stringify(changeSubtileList.map((item, index) => {
+        return {
+          subtitle: item.en_name,
+          sort: index
+        }
+      })))
+    }
+  }
+
   //判斷有沒有資料
   const judgeSubtitleList = () => {
     if (subtitleList.length === 0) {
       return (
         <View style={commonStyle.defaultLoading}>
-          <MyText
-            style={{ textAlign: 'center', fontSize: 24, color: 'orange' }}
-          >
+          <MyText style={commonStyle.noDataMsg}>
             還沒有項目，歡迎提供
           </MyText>
         </View>
       )
     } else {
       return (
-        <FlatList
-          data={subtitleList}
-          renderItem={({ item }) => (
-            <SubtitleList navigation={navigation} subtitle={item} />
-          )}
-          keyExtractor={(item) => item.id}
-          refreshing={loading}
-          onRefresh={() => getSubtitleList(setLoading, setSubtitleList, setOriginSubtitleList, subjectEN)}
-        />
+        <>
+          <HelperText type="info" visible={true}>
+            <MyText style={{ textAlign: 'center' }}>每個項目可以長按拖曳移動位置</MyText>
+          </HelperText>
+          <DragList
+            style={{ height: "100%" }}
+            data={subtitleList}
+            renderItem={renderItem}
+            keyExtractor={(item) => item.id}
+            onReordered={onReordered}
+            refreshing={loading}
+            onRefresh={() => getSubtitleList(setLoading, setSubtitleList, setOriginSubtitleList, subjectEN)}
+          />
+        </>
       )
     }
   }
 
   return (
     <View style={{ flex: 1 }}>
-      {loading ? (<ActivityIndicator size='large' style={commonStyle.defaultLoading} />) : (judgeSubtitleList())}
+      {loading ? (<ActivityIndicator size='large' style={commonStyle.defaultLoading} />) :
+        (judgeSubtitleList())}
       <SubtitleFilterModal
         filterModalShow={filterModalShow}
         filterSubtile={filterSubtile}
         showSubtitleItems={showSubtitleItems}
-        setShowSubtitleItems={setShowSubtitleItems}
       />
       <IconButton
         mode='contained'

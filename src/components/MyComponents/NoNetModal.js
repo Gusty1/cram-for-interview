@@ -3,6 +3,7 @@ import { Modal, Portal } from 'react-native-paper'
 import MyText from './MyText'
 import { commonStyle } from '../../styles'
 
+//沒有網路的modal
 const NoNetModal = () => {
   return (
     <Portal>
@@ -21,7 +22,7 @@ const NoNetModal = () => {
         />
       </Modal>
     </Portal>
-  );
-};
+  )
+}
 
-export default NoNetModal;
+export default NoNetModal

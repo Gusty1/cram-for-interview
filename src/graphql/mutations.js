@@ -214,6 +214,72 @@ export const deleteBugReport = /* GraphQL */ `
     }
   }
 `;
+export const createNewQuestion = /* GraphQL */ `
+  mutation CreateNewQuestion(
+    $input: CreateNewQuestionInput!
+    $condition: ModelNewQuestionConditionInput
+  ) {
+    createNewQuestion(input: $input, condition: $condition) {
+      id
+      username
+      email
+      subject
+      subtitle
+      question
+      answer
+      images
+      status
+      result
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const updateNewQuestion = /* GraphQL */ `
+  mutation UpdateNewQuestion(
+    $input: UpdateNewQuestionInput!
+    $condition: ModelNewQuestionConditionInput
+  ) {
+    updateNewQuestion(input: $input, condition: $condition) {
+      id
+      username
+      email
+      subject
+      subtitle
+      question
+      answer
+      images
+      status
+      result
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const deleteNewQuestion = /* GraphQL */ `
+  mutation DeleteNewQuestion(
+    $input: DeleteNewQuestionInput!
+    $condition: ModelNewQuestionConditionInput
+  ) {
+    deleteNewQuestion(input: $input, condition: $condition) {
+      id
+      username
+      email
+      subject
+      subtitle
+      question
+      answer
+      images
+      status
+      result
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
 export const createMaintain = /* GraphQL */ `
   mutation CreateMaintain(
     $input: CreateMaintainInput!
@@ -221,7 +287,8 @@ export const createMaintain = /* GraphQL */ `
   ) {
     createMaintain(input: $input, condition: $condition) {
       id
-      finishDate
+      endDate
+      show
       showText
       remark
       createdAt
@@ -237,7 +304,8 @@ export const updateMaintain = /* GraphQL */ `
   ) {
     updateMaintain(input: $input, condition: $condition) {
       id
-      finishDate
+      endDate
+      show
       showText
       remark
       createdAt
@@ -253,7 +321,8 @@ export const deleteMaintain = /* GraphQL */ `
   ) {
     deleteMaintain(input: $input, condition: $condition) {
       id
-      finishDate
+      endDate
+      show
       showText
       remark
       createdAt

@@ -151,11 +151,58 @@ export const listBugReports = /* GraphQL */ `
     }
   }
 `;
+export const getNewQuestion = /* GraphQL */ `
+  query GetNewQuestion($id: ID!) {
+    getNewQuestion(id: $id) {
+      id
+      username
+      email
+      subject
+      subtitle
+      question
+      answer
+      images
+      status
+      result
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const listNewQuestions = /* GraphQL */ `
+  query ListNewQuestions(
+    $filter: ModelNewQuestionFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listNewQuestions(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        id
+        username
+        email
+        subject
+        subtitle
+        question
+        answer
+        images
+        status
+        result
+        createdAt
+        updatedAt
+        __typename
+      }
+      nextToken
+      __typename
+    }
+  }
+`;
 export const getMaintain = /* GraphQL */ `
   query GetMaintain($id: ID!) {
     getMaintain(id: $id) {
       id
-      finishDate
+      endDate
+      show
       showText
       remark
       createdAt
@@ -173,7 +220,8 @@ export const listMaintains = /* GraphQL */ `
     listMaintains(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
         id
-        finishDate
+        endDate
+        show
         showText
         remark
         createdAt

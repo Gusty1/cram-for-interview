@@ -37,9 +37,23 @@ type BugReport @model {
   result: String
 }
 
+type NewQuestion @model {
+  id: ID!
+  username: String
+  email: String
+  subject: String!
+  subtitle: String
+  question: String
+  answer: String
+  images: String
+  status: String
+  result: String
+}
+
 type Maintain @model {
   id: ID!
-  finishDate: String
+  endDate: String
+  show: Boolean
   showText: String
   remark: String
 }

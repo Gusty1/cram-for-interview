@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "cram-for-interview",
+    "name": "面試抱佛腳",
     "slug": "cram-for-interview",
-    "version": "1.0.0",
+    "version": "0.1.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -19,7 +19,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.gusty_tw.cramforinterview"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -29,7 +30,8 @@
         "expo-font",
         {
           "fonts": [
-            "node_modules/@expo-google-fonts/noto-sans-tc/NotoSansTC-Black.ttf"
+            "./src/assets/fonts/LXGWWenKaiTC-Regular.ttf",
+            "./src/assets/fonts/LXGWWenKaiTC-Bold.ttf"
           ]
         }
       ],
@@ -37,9 +39,16 @@
         "expo-sqlite",
         {
           "enableFTS": true,
-          "useSQLCipher": true
+          "useSQLCipher": false
         }
-      ]
-    ]
+      ],
+      "expo-video"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "129afc21-8dc9-4d76-8359-d4266332123b"
+      }
+    },
+    "owner": "gusty_tw"
   }
 }

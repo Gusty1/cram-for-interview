@@ -3,12 +3,13 @@ import { ScrollView, View } from 'react-native'
 import { Divider, Snackbar, FAB, IconButton } from 'react-native-paper'
 import Markdown from 'react-native-markdown-display'
 import MyText from '../MyComponents/MyText'
-import { questionStyle } from '../../styles'
+import { questionStyle, markdownStyle } from '../../styles'
 import QuestionMenu from './QuestionMenu'
 import QuestionBottomView from './QuestionBottomView'
 import useStore from '../../store'
 
-const Questions = ({ curQuestion, swiperObj, ctrlMethod }) => {
+//問題組件
+const Questions = ({ curQuestion, swiperObj, ctrlMethod, subtitleZH, subjectEN }) => {
   //取得當前題目
   const [thisQuestion, setThisQuestion] = useState(null)
   //操作成功的tip顯示
@@ -40,15 +41,7 @@ const Questions = ({ curQuestion, swiperObj, ctrlMethod }) => {
     </View>
     <Divider />
     <ScrollView style={{ padding: 10, flex: 1 }}>
-      {/* 需要根據黑暗模式切換顏色 */}
-      <Markdown
-        style={{
-          text: {
-            fontSize: setting.answerTextSize,
-            color: setting.darkMode ? '#fff' : '#000'
-          },
-        }}
-      >
+      <Markdown style={markdownStyle(setting)}>
         {thisQuestion?.answer || ''}
       </Markdown>
     </ScrollView>
@@ -82,7 +75,7 @@ const Questions = ({ curQuestion, swiperObj, ctrlMethod }) => {
           setShowSnackBar("不喜歡")
         }
         else {
-          addFavorite(thisQuestion.en_name, thisQuestion.id)
+          addFavorite(thisQuestion.subtitle, subtitleZH, subjectEN, thisQuestion.id)
           setShowSnackBar("喜歡")
         }
       }}

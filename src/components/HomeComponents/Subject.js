@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
-import { View, FlatList } from 'react-native'
+import { View, FlatList, Alert } from 'react-native'
 import { ActivityIndicator } from 'react-native-paper'
 import uuid from 'react-native-uuid'
+import { defaultSetting } from '../../constants'
 import { getSubjects } from '../../services'
 import SubjectCard from './SubjectCard'
 import { commonStyle } from '../../styles'
@@ -19,12 +20,14 @@ const getSubjectList = async (setSubjectList, setLoading) => {
     }
     setSubjectList(response)
   } catch (err) {
+    Alert(defaultSetting.errMsg)
     console.log('getSubjectList err: ', err)
   } finally {
     setLoading(false)
   }
 };
 
+//主題的容器
 const Subject = ({ navigation }) => {
   const [subjectList, setSubjectList] = useState([])
   const [loading, setLoading] = useState(true)
@@ -35,24 +38,24 @@ const Subject = ({ navigation }) => {
 
   return (
     <View style={{ flex: 1 }}>
-      {loading ? (<ActivityIndicator size='large' style={commonStyle.defaultLoading} />) : 
-      (
-        <FlatList
-          data={subjectList}
-          renderItem={({ item }) => (
-            <SubjectCard subjectObj={item} navigation={navigation} />
-          )}
-          keyExtractor={(item) => item.id}
-          numColumns={3}
-          columnWrapperStyle={{
-            justifyContent: 'space-between',
-            gap: 10,
-            marginTop: 20
-          }}
-          refreshing={loading}
-          onRefresh={() => getSubjectList(setSubjectList, setLoading)}
-        />
-      )}
+      {loading ? (<ActivityIndicator size='large' style={commonStyle.defaultLoading} />) :
+        (
+          <FlatList
+            data={subjectList}
+            renderItem={({ item }) => (
+              <SubjectCard subjectObj={item} navigation={navigation} />
+            )}
+            keyExtractor={(item) => item.id}
+            numColumns={3}
+            columnWrapperStyle={{
+              justifyContent: 'space-between',
+              gap: 10,
+              marginTop: 20
+            }}
+            refreshing={loading}
+            onRefresh={() => getSubjectList(setSubjectList, setLoading)}
+          />
+        )}
     </View>
   )
 }

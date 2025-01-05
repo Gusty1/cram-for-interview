@@ -3,7 +3,7 @@ import axios from 'axios'
 // 建立 axios 實例
 const apiClient = axios.create({
   // baseURL: 'https://api.example.com', //預設請求路徑
-  timeout: 3000, // 設置請求超時
+  timeout: 5000, // 設置請求超時
   headers: {
     'Content-Type': 'application/json',
   }

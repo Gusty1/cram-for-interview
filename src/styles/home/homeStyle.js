@@ -19,7 +19,6 @@ export default StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'flex-start',
     flexWrap: 'nowrap',
-    gap: 5,
   },
   //主題卡片的容器
   cardContainer: {
