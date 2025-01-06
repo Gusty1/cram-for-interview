@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Image } from 'react-native'
 import { List, Divider, IconButton } from 'react-native-paper'
-import { Fontisto } from 'react-native-vector-icons'
+import { Fontisto } from '@expo/vector-icons';
 import { defaultSetting } from '../../constants'
 import MyText from '../MyComponents/MyText'
 import useStore from '../../store'
