@@ -1,21 +1,23 @@
 
 
 const markdownStyle = (setting) => {
+	const color = setting.darkMode ? '#FCFCFC' : '#272727'
+
 	return {
 		//一般文字的調整
 		body: {
 			fontSize: setting.answerTextSize,
-			color: setting.darkMode ? '#FCFCFC' : '#272727',
+			color: color,
 			fontFamily: 'LXGWWenKaiTC-Regular'
 		},
 
 		//list 前面的icon顏色調整
 		bullet_list_icon: {
 			fontFamily: 'LXGWWenKaiTC-Regular',
-			color: setting.darkMode ? '#FCFCFC' : '#272727'
+			color: color
 		},
 		ordered_list_icon: {
-			color: setting.darkMode ? '#FCFCFC' : '#272727'
+			color: color
 		},
 
 		//換bold完全看不出差別，就還是先不換了，但bold字體保留
@@ -52,6 +54,7 @@ const markdownStyle = (setting) => {
 			fontFamily: 'LXGWWenKaiTC-Regular',
 			fontSize: setting.answerTextSize + 2,
 		}
+		//剩下heading5、6感覺就用不到就不調整了
 	}
 }
 

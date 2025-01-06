@@ -15,8 +15,6 @@
     "@react-native-community/netinfo": "^11.4.1",
     "@react-native-community/slider": "^4.5.5",
     "@react-navigation/bottom-tabs": "^7.2.0",
-    "@react-navigation/drawer": "^7.1.1",
-    "@react-navigation/elements": "^2.2.5",
     "@react-navigation/native": "^7.0.14",
     "@react-navigation/native-stack": "^7.2.0",
     "aws-amplify": "^5.3.27",
@@ -26,10 +24,8 @@
     "expo": "~52.0.20",
     "expo-av": "~15.0.1",
     "expo-clipboard": "~7.0.0",
-    "expo-file-system": "~18.0.6",
     "expo-font": "~13.0.2",
     "expo-image-picker": "~16.0.3",
-    "expo-random": "^14.0.1",
     "expo-screen-orientation": "^8.0.2",
     "expo-sqlite": "~15.0.5",
     "expo-status-bar": "~2.0.0",
@@ -64,6 +60,5 @@
   "prettier": {
     "config": "./.prettierrc.json"
   },
-  "private": true,
-  "packageManager": "yarn@1.22.22+sha256.c17d3797fb9a9115bf375e31bfd30058cac6bc9c3b8807a3d8cb2094794b51ca"
+  "private": true
 }

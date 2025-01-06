@@ -11,9 +11,8 @@ import useStore from '../../../store'
 import { defaultSetting } from '../../../constants'
 
 //取得收藏的完整資料
-const getFavoriteListData = async (setLoading, setFavorites, setShowSubtitleItems, setAllQuestions) => {
+const getFavoriteListData = async (setLoading, setFavorites, setShowSubtitleItems) => {
   setLoading(true)
-  let allQuestions = []
   const allFavorites = await getAllFavorite()
   // 過濾不重複的subtitle
   const seen = new Set();
@@ -44,7 +43,6 @@ const getFavoriteListData = async (setLoading, setFavorites, setShowSubtitleItem
             subtitleShow: item.subtitleShow
           }
         })
-      allQuestions = [...questions, ...allQuestions]
       return {
         ...item,
         id: uuid.v4(),
@@ -66,21 +64,19 @@ const getFavoriteListData = async (setLoading, setFavorites, setShowSubtitleItem
   ))
   setShowSubtitleItems(modelShowSubtitleItems)
   setFavorites(favoriteAry)
-  //TODO 從收藏list進入問題詳細頁，問題的排序會不太一樣...
-  setAllQuestions(allQuestions)
   setLoading(false)
 }
 
 const FavoriteScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(true)
   const [favorites, setFavorites] = useState([])
-  const [allQuestions, setAllQuestions] = useState([])
   const [showSubtitleItems, setShowSubtitleItems] = useState([])
   const [filterModalShow, setFilterModalShow] = useState(false)
   const { favoriteList, getFavoriteList } = useStore()
+  let isDel = false
 
   useEffect(() => {
-    getFavoriteListData(setLoading, setFavorites, setShowSubtitleItems, setAllQuestions)
+    getFavoriteListData(setLoading, setFavorites, setShowSubtitleItems)
   }, [favoriteList])
 
   useFocusEffect(
@@ -89,7 +85,7 @@ const FavoriteScreen = ({ navigation }) => {
 
       // 螢幕失焦要做的事，由於刪除收藏沒有呼叫store，切換到其它到地方仍然會維持原樣，所以離開本螢幕時重新呼叫store
       return () => {
-        getFavoriteList()
+        if (isDel) getFavoriteList()
       }
     }, [])
   )
@@ -108,12 +104,14 @@ const FavoriteScreen = ({ navigation }) => {
 
   //拖曳的組件渲染，補上拖曳方法
   const renderItem = ({ item, onDragStart, onDragEnd }) => {
+    const allQuestions = []
+    favorites.forEach(item => allQuestions.push(...item.questions))
     return (
       <FavoriteList
         navigation={navigation}
         favoriteSubtitle={item}
-        allQuestions={allQuestions}
         delFavorite={delFavorite}
+        allQuestions={allQuestions}
         onDragStart={onDragStart}
         onDragEnd={onDragEnd}
       />
@@ -149,10 +147,8 @@ const FavoriteScreen = ({ navigation }) => {
       }
       return item
     }).filter(item => item.questions.length > 0)
+    isDel = true
     deleteFavorite(id)
-    //全部收藏的題目過濾掉該問題
-    const tampAllQuestions = allQuestions.filter(que => que.id !== id)
-    setAllQuestions(tampAllQuestions)
     setFavorites(newFavorites)
   }
 
@@ -166,20 +162,23 @@ const FavoriteScreen = ({ navigation }) => {
     const temp = changeFavorites[fromIndex]
     changeFavorites[fromIndex] = changeFavorites[toIndex]
     changeFavorites[toIndex] = temp
-    setFavorites(changeFavorites)
-    //寫入移動後的位置
-    if (favorites && favorites.length > 0 && setting) {
-      const sortSrt = favorites.map((item, index) => {
-        return {
-          subtitle: item.subtitle,
-          sort: index
-        }
-      })
-      setSettingData({
-        ...setting,
-        favoriteSortStr: JSON.stringify(sortSrt)
-      })
+    //寫入移動後的位置，不用async拖曳會卡卡的
+    const writeSortSetting = async () => {
+      if (favorites && favorites.length > 0 && setting) {
+        const sortSrt = favorites.map((item, index) => {
+          return {
+            subtitle: item.subtitle,
+            sort: index
+          }
+        })
+        await setSettingData({
+          ...setting,
+          favoriteSortStr: JSON.stringify(sortSrt)
+        })
+      }
     }
+    writeSortSetting()
+    setFavorites(changeFavorites)
   }
 
   return (
@@ -194,7 +193,7 @@ const FavoriteScreen = ({ navigation }) => {
         keyExtractor={(item) => item.id}
         onReordered={onReordered}
         refreshing={loading}
-        onRefresh={() => getFavoriteListData(setLoading, setFavorites, setShowSubtitleItems, setAllQuestions)}
+        onRefresh={() => getFavoriteListData(setLoading, setFavorites, setShowSubtitleItems)}
       />
       <SubtitleFilterModal
         filterModalShow={filterModalShow}
