@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import { View, Linking, Alert } from 'react-native'
+import { View, Alert } from 'react-native'
 import { Switch, Button, Divider, Snackbar } from 'react-native-paper'
 import Constants from 'expo-constants';
+import * as MailComposer from 'expo-mail-composer';
 import useStore from '../../../store'
 import { MyMainView, MyText } from '../../../components'
 import { emailInfo, initSetting, defaultSetting } from '../../../constants'
@@ -26,22 +27,21 @@ const SettingScreen = ({ navigation, route }) => {
   }, [send])
 
   //意見反饋開啟email
-  const openMailApp = () => {
-    const mailto = `mailto:${emailInfo.email}?
-    &subject=${encodeURIComponent(emailInfo.subject)}&body=`;
-
-    // 檢查是否有可處理的郵件應用程式
-    Linking.canOpenURL(mailto)
-      .then((supported) => {
-        if (!supported) {
-          Alert.alert('錯誤', '未找到可處理的郵件應用程式');
-        } else {
-          return Linking.openURL(mailto); // 開啟郵件應用程式
-        }
-      }).catch((err) => {
-        Alert(defaultSetting.errMsg)
-        console.error('開啟郵件應用程式時出錯:', err);
-      })
+  const sendEmail = async () => {
+    const isAvailable = await MailComposer.isAvailableAsync()
+    if (!isAvailable) {
+      Alert.alert('無法發送郵件', '此裝置不支持郵件撰寫功能。')
+      return
+    }
+    try {
+      const result = await MailComposer.composeAsync(emailInfo)
+      if (result.status === MailComposer?.Status?.SENT) {
+        Alert.alert('送出成功')
+      }
+    } catch (error) {
+      Alert.alert(defaultSetting.errMsg)
+      console.error(error)
+    }
   }
 
   const clearLocalData = () => {
@@ -92,7 +92,7 @@ const SettingScreen = ({ navigation, route }) => {
         </Button>
         <Button icon="email" mode="contained"
           buttonColor='skyblue'
-          onPress={() => openMailApp()}>
+          onPress={() => sendEmail()}>
           <MyText>意見反饋</MyText>
         </Button>
         <Button icon="card-plus" mode="contained" buttonColor='#A3D1D1'

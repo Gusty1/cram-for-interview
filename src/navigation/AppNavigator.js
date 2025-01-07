@@ -5,7 +5,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { AntDesign, Entypo, Ionicons } from '@expo/vector-icons'
 import { MD3DarkTheme, MD3LightTheme, adaptNavigationTheme, PaperProvider } from 'react-native-paper'
 import uuid from 'react-native-uuid'
-import { NoNetModal, MaintainModal } from '../components'
+import { NoNetModal, MaintainModal, QuestionHeaderRight } from '../components'
 import useStore from '../store'
 import SubjectScreen from './screens/HomeScreen/SubjectScreen'
 import SubtitleScreen from './screens/HomeScreen/SubtitleScreen'
@@ -70,6 +70,7 @@ const HomeStack = () => {
             headerTitle: () => (
               <MyText variant='headlineLarge'>{route.params.subtitleZH}</MyText>
             ),
+            headerRight: () => (<QuestionHeaderRight />),
             tabBarIcon: ({ color, size }) => (
               <Entypo name='home' size={size} color={color} />
             )
@@ -106,6 +107,7 @@ const FavoriteStack = () => {
           return {
             ...navigationSetting,
             headerTitle: () => (<MyText variant='headlineLarge'>{route.params.subtitleZH}</MyText>),
+            headerRight: () => (<QuestionHeaderRight />),
             tabBarIcon: ({ color, size }) => (
               <Entypo name='home' size={size} color={color} />
             )

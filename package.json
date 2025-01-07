@@ -44,7 +44,8 @@
     "react-native-screens": "~4.4.0",
     "react-native-uuid": "^2.0.3",
     "zustand": "^5.0.2",
-    "@expo/vector-icons": "^14.0.2"
+    "@expo/vector-icons": "^14.0.2",
+    "expo-mail-composer": "~14.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.26.0",

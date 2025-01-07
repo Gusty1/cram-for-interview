@@ -14,7 +14,7 @@ const QuestionScreen = ({ route }) => {
   const swiperViewRef = useRef(null)
   const [loading, setLoading] = useState(true)
   const [questionList, setQuestionList] = useState([])
-  const navigation = useNavigation();
+  const navigation = useNavigation()
 
   useEffect(() => {
     const getQuestionList = async () => {
@@ -59,8 +59,14 @@ const QuestionScreen = ({ route }) => {
     }
   }
 
-  return loading ? <ActivityIndicator style={commonStyle.defaultLoading} size='large' /> :
-    (<PagerView style={{ flex: 1 }} ref={swiperViewRef} initialPage={questionList.findIndex(q => q.id === questionID)}
+  if (loading) {
+    return (
+      <ActivityIndicator style={commonStyle.defaultLoading} size='large' />
+    )
+  }
+
+  return (
+    <PagerView style={{ flex: 1 }} ref={swiperViewRef} initialPage={questionList.findIndex(q => q.id === questionID)}
       onPageSelected={pageChange}>
       {questionList.map((question, index) => {
         return <Questions curQuestion={question} key={uuid.v4()} subtitleZH={subtitleZH}
@@ -68,7 +74,8 @@ const QuestionScreen = ({ route }) => {
           ctrlMethod={{ onRightSwiper, onLeftSwiper }} subjectEN={subjectEN}
         />
       })}
-    </PagerView>)
-};
+    </PagerView>
+  )
+}
 
 export default QuestionScreen
