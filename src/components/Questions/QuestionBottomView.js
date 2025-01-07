@@ -123,7 +123,7 @@ const QuestionBottomView = ({ setShowSnackBar, showBottomView, setShowBottomView
               <HelperText type='error' visible={sendError}>
                 <MyText>請輸入錯誤內容</MyText>
               </HelperText>
-              <View style={{ marginTop: 5, alignSelf: 'flex-start' }}>
+              <View style={{ marginTop: 5, alignSelf: 'flex-start', marginBottom: 10 }}>
                 <Button
                   mode='contained-tonal'
                   onPress={() => sendReport(questionID, sendData, setSendError, bottomSheetRef, setShowSnackBar)}
