@@ -43,7 +43,7 @@ const Questions = ({ curQuestion, swiperObj, ctrlMethod, subtitleZH, subjectEN }
         </MyText>
       </View>
       <Divider />
-      <ScrollView style={{ padding: 10, height: showBottomView ? 'auto' : '100%' }}>
+      <ScrollView style={{ padding: 10, height: showBottomView ? 'auto' : '100%',zIndex:99 }}>
         {answerShow ? (
           <Image source={require('../../assets/images/answerHide.jpg')}
             resizeMode='contain'
@@ -112,17 +112,17 @@ const Questions = ({ curQuestion, swiperObj, ctrlMethod, subtitleZH, subjectEN }
       {swiperObj.left ? null : <IconButton
         icon="chevron-left"
         mode="contained-tonal"
-        iconColor="orange"
+        iconColor="rgba(255, 165, 0,0.4)"
         size={40}
         onPress={() => ctrlMethod.onLeftSwiper(swiperObj.index - 1)}
-        style={{ ...questionStyle.swiperBtn, left: 5 }}
+        style={{ ...questionStyle.swiperBtn, left: 0 }}
       />}
       {swiperObj.right ? null : <IconButton
         icon="chevron-right"
-        iconColor="orange"
+        iconColor="rgba(255, 165, 0,0.4)"
         size={40}
         onPress={() => ctrlMethod.onRightSwiper(swiperObj.index + 1)}
-        style={{ ...questionStyle.swiperBtn, right: 5 }}
+        style={{ ...questionStyle.swiperBtn, right: 0 }}
       />}
     </View>
   )
