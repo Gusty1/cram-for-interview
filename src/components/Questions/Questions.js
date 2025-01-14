@@ -43,7 +43,7 @@ const Questions = ({ curQuestion, swiperObj, ctrlMethod, subtitleZH, subjectEN }
         </MyText>
       </View>
       <Divider />
-      <ScrollView style={{ padding: 10, height: showBottomView ? 'auto' : '100%',zIndex:99 }}>
+      <ScrollView style={{ padding: 10, height: showBottomView ? 'auto' : '100%',zIndex:10 }}>
         {answerShow ? (
           <Image source={require('../../assets/images/answerHide.jpg')}
             resizeMode='contain'

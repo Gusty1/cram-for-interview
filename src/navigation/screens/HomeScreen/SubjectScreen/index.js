@@ -1,6 +1,7 @@
 import { MyMainView, Sentence, Subject } from '../../../../components'
 
-const SubjectScreen = ({navigation}) => {
+const SubjectScreen = ({ navigation }) => {
+
   return (
     <MyMainView>
       <Sentence />

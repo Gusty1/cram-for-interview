@@ -199,7 +199,7 @@ const BottomTabs = () => {
 
 const AppNavigator = () => {
   const { setting, getSetting, isConnected, initNetworkListener, favoriteList, getFavoriteList,
-    thumbList, getThumbList } = useStore();
+    thumbList, getThumbList } = useStore()
   const [screenChange, setScreenChange] = useState(null)
   const [maintainInfo, setMaintainInfo] = useState(null)
 
