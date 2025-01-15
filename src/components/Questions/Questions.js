@@ -43,16 +43,23 @@ const Questions = ({ curQuestion, swiperObj, ctrlMethod, subtitleZH, subjectEN }
         </MyText>
       </View>
       <Divider />
-      <ScrollView style={{ padding: 10, height: showBottomView ? 'auto' : '100%',zIndex:10 }}>
+      <ScrollView style={{
+        padding: 10,
+        height: showBottomView ? 'auto' : '100%'
+      }}>
         {answerShow ? (
           <Image source={require('../../assets/images/answerHide.jpg')}
             resizeMode='contain'
             style={{ width: '100%' }}
           />
         ) : (
-          <Markdown style={markdownStyle(setting)}>
-            {thisQuestion.answer}
-          </Markdown>
+          //如果字太多會被FAB遮住，設定zIndex又會擋到FAB，FAB設定透明又會有不知名的白框...
+          //目前我只能想到這樣，把他拉長，讓他可以上下捲動
+          <View style={{ minHeight: 1000 }}>
+            <Markdown style={markdownStyle(setting)}>
+              {thisQuestion.answer}
+            </Markdown>
+          </View>
         )}
       </ScrollView>
       <QuestionBottomView

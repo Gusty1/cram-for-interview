@@ -10,14 +10,14 @@ export default StyleSheet.create({
     position: "absolute",
     margin: 16,
     right: 0,
-    bottom: 150,
+    bottom: 150
   },
   // 問題組件右下的第2個按鈕
   rightBottomBtn2: {
     position: "absolute",
     margin: 16,
     right: 0,
-    bottom: 80,
+    bottom: 80
   },
   //問題組件的bottomView header樣式
   handleStyle: {
@@ -43,7 +43,6 @@ export default StyleSheet.create({
   swiperBtn: {
     position: "absolute",
     bottom: "47%",
-    backgroundColor: "transparent",
-    zIndex: 20,
+    backgroundColor: "transparent"
   },
 })
