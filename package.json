@@ -1,6 +1,6 @@
 {
   "name": "cram-for-interview",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "main": "index.js",
   "scripts": {
     "start": "expo start",
@@ -22,7 +22,7 @@
     "aws-amplify-react-native": "^7.0.8",
     "axios": "^1.7.9",
     "dayjs": "^1.11.13",
-    "expo": "~52.0.35",
+    "expo": "~52.0.38",
     "expo-av": "~15.0.2",
     "expo-clipboard": "~7.0.1",
     "expo-font": "~13.0.2",
@@ -31,7 +31,7 @@
     "expo-screen-orientation": "~8.0.4",
     "expo-sqlite": "~15.1.2",
     "expo-status-bar": "~2.0.1",
-    "expo-video": "~2.0.5",
+    "expo-video": "~2.0.6",
     "react": "18.3.1",
     "react-hook-form": "^7.54.2",
     "react-native": "0.76.7",
@@ -63,5 +63,5 @@
     "config": "./.prettierrc.json"
   },
   "private": true,
-  "packageManager": "yarn@1.22.22+sha256.c17d3797fb9a9115bf375e31bfd30058cac6bc9c3b8807a3d8cb2094794b51ca"
+  "packageManager": "npm@11.2.0"
 }
