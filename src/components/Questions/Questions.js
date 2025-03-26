@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { ScrollView, View, Image } from 'react-native'
+import { View,ScrollView, Image } from 'react-native'
 import { Divider, Snackbar, FAB, IconButton } from 'react-native-paper'
 import Markdown from 'react-native-markdown-display'
 import MyText from '../MyComponents/MyText'
@@ -43,31 +43,27 @@ const Questions = ({ curQuestion, swiperObj, ctrlMethod, subtitleZH, subjectEN }
         </MyText>
       </View>
       <Divider />
-      <ScrollView style={{
-        padding: 10,
-        height: showBottomView ? 'auto' : '100%'
-      }}>
-        {answerShow ? (
-          <Image source={require('../../assets/images/answerHide.jpg')}
-            resizeMode='contain'
-            style={{ width: '100%' }}
-          />
-        ) : (
-          //如果字太多會被FAB遮住，設定zIndex又會擋到FAB，FAB設定透明又會有不知名的白框...
-          //目前我只能想到這樣，把他拉長，讓他可以上下捲動
-          <View style={{ minHeight: 1000 }}>
+      <View style={{ flex: 1 }}>
+        <ScrollView style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, padding: 10,zIndex:4 }}
+        contentContainerStyle={{ minHeight:'150%' }}>
+          {answerShow ? (
+            <Image source={require('../../assets/images/answerHide.jpg')}
+              resizeMode='contain'
+              style={{ width: '100%' }}
+            />
+          ) : (
             <Markdown style={markdownStyle(setting)}>
               {thisQuestion.answer}
             </Markdown>
-          </View>
-        )}
-      </ScrollView>
-      <QuestionBottomView
-        setShowSnackBar={setShowSnackBar}
-        showBottomView={showBottomView}
-        setShowBottomView={setShowBottomView}
-        questionID={thisQuestion.id}
-      />
+          )}
+        </ScrollView>
+        <QuestionBottomView
+          setShowSnackBar={setShowSnackBar}
+          showBottomView={showBottomView}
+          setShowBottomView={setShowBottomView}
+          questionID={thisQuestion.id}
+        />
+      </View>
       <FAB
         icon={thisQuestion.thumb ? "thumb-up" : "thumb-up-outline"}
         color='blue'

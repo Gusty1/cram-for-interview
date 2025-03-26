@@ -33,16 +33,16 @@ const sendReport = async (questionID, sendData, setSendError, bottomSheetRef, se
 
 const QuestionBottomView = ({ setShowSnackBar, showBottomView, setShowBottomView, questionID }) => {
   const bottomSheetRef = useRef(null)
-  const [snapPoints, setSnapPoints] = useState(null)
   const [sendData, setSendData] = useState({
     email: '',
     fixContent: ''
   })
   const [sendError, setSendError] = useState(false)
+  const [snapPoints, setSnapPoints] = useState(null)
   const { setting, setSetting } = useStore()
 
   useEffect(() => {
-    setSnapPoints(showBottomView === 'fontSize' ? ['50%'] : ["100%"])
+    setSnapPoints(showBottomView === 'fontSize' ? ['25%'] : ["75%"])
     if (showBottomView) bottomSheetRef.current.expand()
     else bottomSheetRef.current.close()
   }, [showBottomView])
@@ -55,7 +55,11 @@ const QuestionBottomView = ({ setShowSnackBar, showBottomView, setShowBottomView
   }, []);
 
   return (
-    <GestureHandlerRootView GestureHandlerRootView style={{ flex: 1 }}>
+    <GestureHandlerRootView style={
+      {
+        ...questionStyle.QuestionViewStyle,
+        zIndex: showBottomView ? 5 : 3
+      }}>
       <BottomSheet
         ref={bottomSheetRef}
         snapPoints={snapPoints}
@@ -104,7 +108,6 @@ const QuestionBottomView = ({ setShowSnackBar, showBottomView, setShowBottomView
                 onChangeText={(text) =>
                   setSendData({ ...sendData, email: text })
                 }
-                style={{ flex: 1 }}
               />
               <HelperText type='info' visible={true}>
                 <MyText>如果願意可以輸入電子郵件，方便我與您確認</MyText>
@@ -117,7 +120,7 @@ const QuestionBottomView = ({ setShowSnackBar, showBottomView, setShowBottomView
                 onChangeText={(text) =>
                   setSendData({ ...sendData, fixContent: text })
                 }
-                style={{ flex: 1, height: 110 }}
+                style={{ height: 120 }}
                 multiline={true}
               />
               <HelperText type='error' visible={sendError}>

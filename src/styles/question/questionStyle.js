@@ -10,14 +10,16 @@ export default StyleSheet.create({
     position: "absolute",
     margin: 16,
     right: 0,
-    bottom: 150
+    bottom: 150,
+    zIndex: 6
   },
   // 問題組件右下的第2個按鈕
   rightBottomBtn2: {
     position: "absolute",
     margin: 16,
     right: 0,
-    bottom: 80
+    bottom: 80,
+    zIndex: 6
   },
   //問題組件的bottomView header樣式
   handleStyle: {
@@ -31,18 +33,26 @@ export default StyleSheet.create({
     flex: 1,
     alignItems: "center",
     alignSelf: "center",
-    width: "100%",
+    width: "100%"
   },
   //問題組件的bottomView內容樣式
   contentStyle: {
     flex: 1,
     marginTop: 10,
     width: "95%",
+    flexGrow: 1
   },
   //問題組件的左右滑動按鈕
   swiperBtn: {
     position: "absolute",
     bottom: "47%",
-    backgroundColor: "transparent"
+    backgroundColor: "transparent",
+    zIndex: 6
   },
+  //問題組件的答案位置與下拉菜單的位置
+  QuestionViewStyle: {
+    position: 'absolute',
+    height: '100%',
+    width: '100%'
+  }
 })
