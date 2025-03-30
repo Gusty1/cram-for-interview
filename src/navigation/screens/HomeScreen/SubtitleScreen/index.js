@@ -22,7 +22,7 @@ const getSubtitleList = async (setLoading, setSubtitleList, setOriginSubtitleLis
         return { ...item, questions: question }
       })
     )
-    //如果本地有排序紀錄，照本的排序，沒有就照名字排
+    //如果本地有排序紀錄，照本地的排序，沒有就照名字排
     const sortList = await getSubtitleSort(subjectEN)
     if (sortList && sortList.length > 0) subtitles = disposeSort(subtitles, sortList)
     else subtitles.sort((a, b) => a.en_name.localeCompare(b.en_name))
@@ -39,13 +39,11 @@ const getSubtitleList = async (setLoading, setSubtitleList, setOriginSubtitleLis
 //處理預設排序，順序對得上就照指定順序排，對不上就排在最後面
 const disposeSort = (subtitles, sortList) => {
   const ary = JSON.parse(sortList[0].subtitleJsonAry)
-  const result = ary.map(item => {
-    const foundObj = subtitles.find(obj => obj.en_name === item.subtitle);
+  const result = subtitles.map(item => {
+    const foundObj = ary.find(obj => obj.subtitle === item.en_name);
     // 如果找到則返回對象，否則返回null
-    return foundObj ? { ...foundObj, sort: item.sort } : null;
+    return foundObj ? { ...foundObj, ...item, sort: foundObj.sort } : { ...item, subtitle: item.en_name, sort: 99 };
   })
-    .filter(Boolean)  // 過濾掉null值
-    .sort((a, b) => a.sort - b.sort); // 根據sort排序
 
   return result
 }
