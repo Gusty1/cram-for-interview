@@ -30,7 +30,6 @@ const SubjectCard = ({ subjectObj, navigation }) => {
       />
       <Card.Cover
         resizeMode='contain'
-        style={homeStyle.cardContainer}
         source={error ? require('../../assets/images/notFound.png') : { uri: image }}
         onError={() => setError(true)}
       />

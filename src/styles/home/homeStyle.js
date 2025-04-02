@@ -20,12 +20,6 @@ export default StyleSheet.create({
     justifyContent: 'flex-start',
     flexWrap: 'nowrap',
   },
-  //主題卡片的容器
-  cardContainer: {
-    marginTop: -45,
-    marginBottom: -30,
-    backgroundColor: 'transparent',
-  },
   //subtitleFilterModal的容器
   subtitleFilterModalContainer: {
     padding: 20,
