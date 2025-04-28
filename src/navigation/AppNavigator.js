@@ -1,4 +1,3 @@
-import ErrorBoundary from 'react-native-error-boundary'
 import { useEffect, useState } from 'react'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { NavigationContainer } from '@react-navigation/native'
@@ -6,7 +5,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { AntDesign, Entypo, Ionicons } from '@expo/vector-icons'
 import { MD3DarkTheme, MD3LightTheme, adaptNavigationTheme, PaperProvider } from 'react-native-paper'
 import uuid from 'react-native-uuid'
-import { NoNetModal, MaintainModal, QuestionHeaderRight, ErrorModal } from '../components'
+import ErrorBoundary from 'react-native-error-boundary'
+import { NoNetModal, MaintainModal, QuestionHeaderRight, ErrorView } from '../components'
 import useStore from '../store'
 import SubjectScreen from './screens/HomeScreen/SubjectScreen'
 import SubtitleScreen from './screens/HomeScreen/SubtitleScreen'
@@ -245,7 +245,7 @@ const AppNavigator = () => {
         maintainInfo ? (
           <MaintainModal maintainInfo={maintainInfo} />
         ) : (
-          <ErrorBoundary FallbackComponent={ErrorModal}>
+          <ErrorBoundary FallbackComponent={ErrorView}>
             <NavigationContainer theme={theme}
               onStateChange={() => setScreenChange(uuid.v4())}>
               <BottomTabs />
