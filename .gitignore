@@ -11,7 +11,7 @@ amplify/backend/awscloudformation
 build/
 dist/
 node_modules/
-amplifyconfiguration.json
+#amplifyconfiguration.json
 awsconfiguration.json
 amplify-build-config.json
 amplify-gradle-config.json
