@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { View,ScrollView, Image } from 'react-native'
+import { View, ScrollView, Image } from 'react-native'
 import { Divider, Snackbar, FAB, IconButton } from 'react-native-paper'
 import Markdown from 'react-native-markdown-display'
 import MyText from '../MyComponents/MyText'
@@ -44,8 +44,8 @@ const Questions = ({ curQuestion, swiperObj, ctrlMethod, subtitleZH, subjectEN }
       </View>
       <Divider />
       <View style={{ flex: 1 }}>
-        <ScrollView style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, padding: 10,zIndex:4 }}
-        contentContainerStyle={{ minHeight:'150%' }}>
+        <ScrollView style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, padding: 10, zIndex: 4 }}
+          contentContainerStyle={{ minHeight: '150%' }}>
           {answerShow ? (
             <Image source={require('../../assets/images/answerHide.jpg')}
               resizeMode='contain'
@@ -98,7 +98,7 @@ const Questions = ({ curQuestion, swiperObj, ctrlMethod, subtitleZH, subjectEN }
         setShowSnackBar={setShowSnackBar}
         setShowBottomView={setShowBottomView}
       />
-      <View style={{ position: 'fixed', bottom: 36 }}>
+      <View style={{ position: 'fixed', bottom: 36, zIndex: 5 }}>
         <Snackbar
           visible={showSnackBar}
           onDismiss={() => setShowSnackBar(null)}

@@ -25,7 +25,7 @@ const QuestionMenu = ({ thisQuestion, setShowSnackBar, setShowBottomView }) => {
 
   return (
     <FAB.Group
-      style={{ bottom: 10, zIndex: 20 }}
+      style={{ zIndex: 20 }}
       open={open}
       visible
       icon={open ? 'close' : 'dots-vertical'}

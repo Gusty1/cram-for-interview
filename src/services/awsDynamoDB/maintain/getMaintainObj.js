@@ -1,14 +1,19 @@
-import { API, graphqlOperation } from 'aws-amplify'
+import { generateClient } from 'aws-amplify/api';
 import { getMaintain } from '../../../graphql/queries'
 import { defaultSetting } from '../../../constants'
 
 const getMaintainObj = async () => {
 	try {
-		const result = await API.graphql(
-			graphqlOperation(getMaintain, {
-				id: defaultSetting.maintainID
-			})
+		const client = generateClient();
+		const result = await client.graphql(
+			{
+				query: getMaintain,
+				variables: {
+					id: defaultSetting.maintainID
+				}
+			}
 		)
+
 		return result.data.getMaintain
 	} catch (error) {
 		console.error('getQuestions error:　', error)

@@ -10,7 +10,7 @@ export default StyleSheet.create({
     position: "absolute",
     margin: 16,
     right: 0,
-    bottom: 150,
+    bottom: 175,
     zIndex: 6
   },
   // 問題組件右下的第2個按鈕
@@ -18,7 +18,7 @@ export default StyleSheet.create({
     position: "absolute",
     margin: 16,
     right: 0,
-    bottom: 80,
+    bottom: 110,
     zIndex: 6
   },
   //問題組件的bottomView header樣式

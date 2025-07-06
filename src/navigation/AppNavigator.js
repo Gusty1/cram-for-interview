@@ -236,17 +236,46 @@ const AppNavigator = () => {
     return null
   }
 
-  const theme = setting.darkMode ? DarkTheme : LightTheme
+  //我感覺是react-native的bug，不知道什麼時候會修復，現在只能先這樣寫
+  const paperTheme = setting.darkMode
+    ? {
+      ...MD3DarkTheme,
+      ...DarkTheme,
+      colors: {
+        ...MD3DarkTheme.colors,
+        ...DarkTheme.colors,
+        // ...theme.dark,
+      },
+      fonts: {
+        ...MD3DarkTheme.fonts,
+        // ...NavigationDarkTheme.fonts,
+        // ...theme.dark,
+      },
+    }
+    : {
+      ...MD3LightTheme,
+      ...LightTheme,
+      colors: {
+        ...MD3LightTheme.colors,
+        ...LightTheme.colors,
+        // ...theme.light,
+      },
+      fonts: {
+        ...MD3LightTheme.fonts,
+        // ...NavigationDefaultTheme.fonts,
+        // ...theme.light,
+      },
+    };
 
   //螢幕切換時都給他一個新的id，讓他更新狀態，然後去檢查是否在維護
   return (
-    <PaperProvider theme={theme}>
+    <PaperProvider theme={paperTheme}>
       {isConnected ? (
         maintainInfo ? (
           <MaintainModal maintainInfo={maintainInfo} />
         ) : (
           <ErrorBoundary FallbackComponent={ErrorView}>
-            <NavigationContainer theme={theme}
+            <NavigationContainer theme={paperTheme}
               onStateChange={() => setScreenChange(uuid.v4())}>
               <BottomTabs />
             </NavigationContainer>
