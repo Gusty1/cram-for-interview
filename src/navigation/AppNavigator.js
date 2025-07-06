@@ -235,8 +235,8 @@ const AppNavigator = () => {
     getSetting()
     return null
   }
-
-  //我感覺是react-native的bug，不知道什麼時候會修復，現在只能先這樣寫
+  //const theme = setting.darkMode ? DarkTheme : LightTheme
+  //我感覺是react-native paper的bug，不知道什麼時候會修復，現在只能先這樣寫
   const paperTheme = setting.darkMode
     ? {
       ...MD3DarkTheme,
