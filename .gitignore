@@ -11,7 +11,7 @@ amplify/backend/awscloudformation
 build/
 dist/
 node_modules/
-#amplifyconfiguration.json
+# amplifyconfiguration.json
 awsconfiguration.json
 amplify-build-config.json
 amplify-gradle-config.json
@@ -394,7 +394,7 @@ build/
 dist/
 node_modules/
 awsconfiguration.json
-amplifyconfiguration.dart
+# amplifyconfiguration.dart
 amplify-build-config.json
 amplify-gradle-config.json
 amplifytools.xcconfig
@@ -414,8 +414,8 @@ build/
 dist/
 node_modules/
 awsconfiguration.json
-amplifyconfiguration.json
-amplifyconfiguration.dart
+# amplifyconfiguration.json
+# amplifyconfiguration.dart
 amplify-build-config.json
 amplify-gradle-config.json
 amplifytools.xcconfig
@@ -435,8 +435,8 @@ build/
 dist/
 node_modules/
 awsconfiguration.json
-amplifyconfiguration.json
-amplifyconfiguration.dart
+# amplifyconfiguration.json
+# amplifyconfiguration.dart
 amplify-build-config.json
 amplify-gradle-config.json
 amplifytools.xcconfig
