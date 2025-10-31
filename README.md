@@ -4,6 +4,13 @@
 
 本app沒有廣告，就只有一個目的收集各種面試問題，幫大家在面試前做最後的準備；題目不限於跟程式相關的，只要你的行業有題目我都可以幫忙。
 
+## 程式截圖
+
+![cramForInterview1](./images/cramForInterview1.jpg)
+![cramForInterview2](./images/cramForInterview2.jpg)
+![cramForInterview3](./images/cramForInterview3.jpg)
+![cramForInterview4](./images/cramForInterview4.jpg)
+
 ## 開發工具
 
 主要使用 Expo、React Native、其他各種工具...
