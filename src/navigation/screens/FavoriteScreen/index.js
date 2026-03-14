@@ -88,13 +88,14 @@ const FavoriteScreen = ({ navigation }) => {
 
   useFocusEffect(
     useCallback(() => {
-      //進入螢幕焦點的事件...
-
-      // 螢幕失焦要做的事，由於刪除收藏沒有呼叫store，切換到其它到地方仍然會維持原樣，所以離開本螢幕時重新呼叫store
+      // 螢幕失焦時：若有刪除操作，同步 store 狀態
       return () => {
-        if (isDelRef.current) getFavoriteList()
+        if (isDelRef.current) {
+          getFavoriteList()
+          isDelRef.current = false
+        }
       }
-    }, [])
+    }, [getFavoriteList])
   )
 
   // useMemo 必須在所有 hooks 之後、條件 return 之前

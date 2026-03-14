@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo, useCallback } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { NavigationContainer } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
@@ -224,11 +224,9 @@ const BottomTabs = () => {
 const AppNavigator = () => {
   const { setting, getSetting, isConnected, initNetworkListener, favoriteList, getFavoriteList,
     thumbList, getThumbList } = useStore()
-  // 改用計數器遞增取代 uuid.v4()，避免每次都產生新字串物件
-  const [screenChange, setScreenChange] = useState(0)
   const [maintainInfo, setMaintainInfo] = useState(null)
 
-  // 初次載入：取得設定、初始化 SQLite、啟動網路監聽
+  // 初次載入：取得設定、初始化 SQLite、啟動網路監聽、檢查維護狀態
   useEffect(() => {
     getSetting()
     const initSql = async () => {
@@ -238,24 +236,15 @@ const AppNavigator = () => {
     }
     initSql()
     initNetworkListener()
-  }, [])
 
-  // 螢幕切換時檢查是否在維護
-  useEffect(() => {
-    const getMaintainData = async () => {
+    // 啟動時檢查維護狀態
+    const checkMaintain = async () => {
       const maintainData = await getMaintainObj()
-      if (maintainData && maintainData?.show) {
+      if (maintainData?.show) {
         setMaintainInfo(maintainData)
-      } else {
-        setMaintainInfo(null)
       }
     }
-    getMaintainData()
-  }, [screenChange])
-
-  // 穩定的螢幕切換回調，使用計數器遞增
-  const handleStateChange = useCallback(() => {
-    setScreenChange(prev => prev + 1)
+    checkMaintain()
   }, [])
 
   // 主題物件使用 useMemo，只在 darkMode 改變時重建
@@ -273,8 +262,7 @@ const AppNavigator = () => {
           <MaintainModal maintainInfo={maintainInfo} />
         ) : (
           <ErrorBoundary FallbackComponent={ErrorView}>
-            <NavigationContainer theme={paperTheme}
-              onStateChange={handleStateChange}>
+            <NavigationContainer theme={paperTheme}>
               <BottomTabs />
             </NavigationContainer>
           </ErrorBoundary>

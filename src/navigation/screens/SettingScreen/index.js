@@ -61,14 +61,16 @@ const SettingScreen = ({ navigation, route }) => {
     )
 
     const clearData = async () => {
-      //重置設定
-      setSetting(initSetting)
-      //刪除本地所有Sqlite資料
-      await delAllData()
-      //重新取得資料，讓store更新
-      getFavoriteList()
-      getThumbList()
-      setShowSnackBar('清除成功')
+      try {
+        setSetting(initSetting)
+        await delAllData()
+        getFavoriteList()
+        getThumbList()
+        setShowSnackBar('清除成功')
+      } catch (e) {
+        Alert.alert(defaultSetting.errMsg)
+        console.error('clearData error:', e)
+      }
     }
   }
 
