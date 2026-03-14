@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import * as ScreenOrientation from 'expo-screen-orientation'
 import { useFonts } from 'expo-font';
 import { Amplify } from 'aws-amplify'
-import amplifyconfig from './amplifyconfiguration.json';
+import amplifyconfig from './amplifyconfiguration';
 import AppNavigator from './navigation/AppNavigator'
 
 export default function App () {

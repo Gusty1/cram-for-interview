@@ -1,7 +1,7 @@
 
 
 const markdownStyle = (setting) => {
-	const color = setting.darkMode ? '#FCFCFC' : '#272727'
+	const color = setting?.darkMode ? '#FCFCFC' : '#272727'
 
 	return {
 		//一般文字的調整
@@ -30,11 +30,11 @@ const markdownStyle = (setting) => {
 		//``區塊裡面的設定
 		code_inline: {
 			fontFamily: 'LXGWWenKaiTC-Regular',
-			backgroundColor: setting.darkMode ? '#5B5B5B' : '#f5f5f5',
+			backgroundColor: setting?.darkMode ? '#5B5B5B' : '#f5f5f5',
 		},
 		//程式區塊裡面的設定
 		fence: {
-			backgroundColor: setting.darkMode ? '#5B5B5B' : '#f5f5f5',
+			backgroundColor: setting?.darkMode ? '#5B5B5B' : '#f5f5f5',
 		},
 
 		//各種標題的設定

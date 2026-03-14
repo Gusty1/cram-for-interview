@@ -4,6 +4,7 @@ import { default as useNetStore } from "./netStore/netStore"
 import { default as useFavoriteStore } from "./sqliteStore/favorite"
 import { default as useThumbStore } from "./sqliteStore/thumb"
 import { default as answerShowStore } from "./answerShowStore/answerShowStore"
+import { default as useCacheStore } from "./cacheStore/cacheStore"
 
 const useStore = create((...set) => {
   return {
@@ -11,7 +12,8 @@ const useStore = create((...set) => {
     ...useNetStore(...set),
     ...useFavoriteStore(...set),
     ...useThumbStore(...set),
-    ...answerShowStore(...set)
+    ...answerShowStore(...set),
+    ...useCacheStore(...set)
   }
 })
 

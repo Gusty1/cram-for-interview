@@ -9,8 +9,8 @@ export default {
   imageBaseUrl: 'https://gusty1.github.io/Database/cramForInterview/images/subtitle/',
   //上傳到imgur的網址
   imgurUrl: 'https://api.imgur.com/3/image',
-  //imgur clientID，上傳到imgur需要clientID
-  clientID: '0a4c1d7727faf54',
+  //imgur clientID，上傳到imgur需要clientID（從環境變數讀取）
+  clientID: process.env.EXPO_PUBLIC_IMGUR_CLIENT_ID,
   //要出現熱門icon的數量
   hotUsefulCount: 10,
   //Maintain表的id

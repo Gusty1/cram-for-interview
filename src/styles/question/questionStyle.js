@@ -5,22 +5,6 @@
 import { StyleSheet } from 'react-native'
 
 export default StyleSheet.create({
-  // 問題組件右下的第一個按鈕
-  rightBottomBtn1: {
-    position: "absolute",
-    margin: 16,
-    right: 0,
-    bottom: 175,
-    zIndex: 6
-  },
-  // 問題組件右下的第2個按鈕
-  rightBottomBtn2: {
-    position: "absolute",
-    margin: 16,
-    right: 0,
-    bottom: 110,
-    zIndex: 6
-  },
   //問題組件的bottomView header樣式
   handleStyle: {
     borderColor: "transparent", //不設定透明看不到陰影

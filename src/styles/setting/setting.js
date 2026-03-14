@@ -13,7 +13,7 @@ export default StyleSheet.create({
   },
   //資訊字的樣式
   tipText: {
-    color: 'gray',
+    color: '#999',
     textAlign: 'center'
   },
   //圖片預覽的容器

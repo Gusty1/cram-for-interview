@@ -1,6 +1,6 @@
-import { useRef, useState, useEffect, useCallback } from 'react'
+import { useRef, useState, useEffect, useCallback, useMemo } from 'react'
 import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet'
-import { ScrollView, View, Alert } from 'react-native'
+import { ScrollView, View, Alert, StyleSheet } from 'react-native'
 import { TextInput, HelperText, Button } from 'react-native-paper'
 import Slider from '@react-native-community/slider'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
@@ -10,7 +10,9 @@ import { addBugReport } from '../../services'
 import { questionStyle } from '../../styles'
 import { defaultSetting } from '../../constants'
 
-//問題頁的底部view，放字體調整、問題回報
+/**
+ * 送出問題回報
+ */
 const sendReport = async (questionID, sendData, setSendError, bottomSheetRef, setShowSnackBar) => {
   try {
     if (!sendData.fixContent.trim()) {
@@ -26,77 +28,95 @@ const sendReport = async (questionID, sendData, setSendError, bottomSheetRef, se
     bottomSheetRef.current.close()
     setShowSnackBar('感謝回報')
   } catch (e) {
-    Alert(defaultSetting.errMsg)
+    Alert.alert(defaultSetting.errMsg)
     console.error('sendReport err: ', e)
   }
 }
 
+/**
+ * 問題頁的底部 BottomSheet，放字體調整、問題回報
+ */
 const QuestionBottomView = ({ setShowSnackBar, showBottomView, setShowBottomView, questionID }) => {
   const bottomSheetRef = useRef(null)
-  const [sendData, setSendData] = useState({
-    email: '',
-    fixContent: ''
-  })
+  const [sendData, setSendData] = useState({ email: '', fixContent: '' })
   const [sendError, setSendError] = useState(false)
-  const [snapPoints, setSnapPoints] = useState(null)
-  const { setting, setSetting } = useStore()
+
+  const setting = useStore((s) => s.setting)
+  const setSetting = useStore((s) => s.setSetting)
+
+  const snapPoints = useMemo(
+    () => showBottomView === 'fontSize' ? ['25%'] : ['75%'],
+    [showBottomView]
+  )
 
   useEffect(() => {
-    setSnapPoints(showBottomView === 'fontSize' ? ['25%'] : ["75%"])
-    if (showBottomView) bottomSheetRef.current.expand()
-    else bottomSheetRef.current.close()
+    if (showBottomView) bottomSheetRef.current?.expand()
+    else bottomSheetRef.current?.close()
   }, [showBottomView])
+
+  const handleClose = useCallback(() => setShowBottomView(null), [setShowBottomView])
 
   const handleSheetChanges = useCallback((index) => {
     if (index > 0) {
-      //調整字體的設定25%超過自動變回來
       bottomSheetRef.current?.snapToIndex(0)
     }
-  }, []);
+  }, [])
+
+  const handleSliderComplete = useCallback((val) => {
+    setSetting({ ...setting, answerTextSize: val })
+  }, [setting, setSetting])
+
+  const handleEmailChange = useCallback((text) => {
+    setSendData((prev) => ({ ...prev, email: text }))
+  }, [])
+
+  const handleContentChange = useCallback((text) => {
+    setSendData((prev) => ({ ...prev, fixContent: text }))
+  }, [])
+
+  const handleSendReport = useCallback(() => {
+    sendReport(questionID, sendData, setSendError, bottomSheetRef, setShowSnackBar)
+  }, [questionID, sendData, setSendError, setShowSnackBar])
+
+  // BottomSheet 容器背景色
+  const bottomContainerStyle = useMemo(() => ({
+    ...questionStyle.bottomContainer,
+    backgroundColor: setting?.darkMode ? '#3d3a27' : '#ffebcd'
+  }), [setting?.darkMode])
+
+  // 控制 zIndex 讓 BottomSheet 顯示在答案上方
+  const rootStyle = useMemo(() => ({
+    ...questionStyle.QuestionViewStyle,
+    zIndex: showBottomView ? 5 : 3
+  }), [showBottomView])
 
   return (
-    <GestureHandlerRootView style={
-      {
-        ...questionStyle.QuestionViewStyle,
-        zIndex: showBottomView ? 5 : 3
-      }}>
+    <GestureHandlerRootView style={rootStyle}>
       <BottomSheet
         ref={bottomSheetRef}
         snapPoints={snapPoints}
         enablePanDownToClose={true}
         enableContentPanningGesture={false}
         index={-1}
-        onClose={() => setShowBottomView(null)}
-        onChange={handleSheetChanges} // 綁定回調
+        onClose={handleClose}
+        onChange={handleSheetChanges}
         handleStyle={questionStyle.handleStyle}
       >
-        <BottomSheetView
-          style={{
-            ...questionStyle.bottomContainer,
-            backgroundColor: setting?.darkMode ? '#3d3a27' : '#ffebcd'
-          }}
-        >
+        <BottomSheetView style={bottomContainerStyle}>
           {showBottomView === 'fontSize' ? (
-            <View
-              style={{
-                ...questionStyle.contentStyle,
-                alignItems: 'center'
-              }}
-            >
-              <MyText style={{ width: '100%', textAlign: 'center' }}>
+            <View style={styles.fontSizeContainer}>
+              <MyText style={styles.fontSizeLabel}>
                 字體大小: {setting.answerTextSize}
               </MyText>
               <Slider
                 value={setting.answerTextSize}
                 step={1}
-                style={{ width: 200 }}
+                style={styles.slider}
                 minimumValue={12}
                 maximumValue={20}
                 minimumTrackTintColor='#FFFFFF'
                 maximumTrackTintColor='#000000'
-                onSlidingComplete={(val) => {
-                  setSetting({ ...setting, answerTextSize: val });
-                }}
+                onSlidingComplete={handleSliderComplete}
               />
             </View>
           ) : (
@@ -105,9 +125,7 @@ const QuestionBottomView = ({ setShowSnackBar, showBottomView, setShowBottomView
                 mode='outlined'
                 label={<MyText>電子郵件</MyText>}
                 value={sendData.email}
-                onChangeText={(text) =>
-                  setSendData({ ...sendData, email: text })
-                }
+                onChangeText={handleEmailChange}
               />
               <HelperText type='info' visible={true}>
                 <MyText>如果願意可以輸入電子郵件，方便我與您確認</MyText>
@@ -117,20 +135,15 @@ const QuestionBottomView = ({ setShowSnackBar, showBottomView, setShowBottomView
                 label={<MyText>錯誤內容</MyText>}
                 placeholder='可以貼網址，只要有辦法可以說明錯誤就好'
                 value={sendData.fixContent}
-                onChangeText={(text) =>
-                  setSendData({ ...sendData, fixContent: text })
-                }
-                style={{ height: 120 }}
+                onChangeText={handleContentChange}
+                style={styles.reportInput}
                 multiline={true}
               />
               <HelperText type='error' visible={sendError}>
                 <MyText>請輸入錯誤內容</MyText>
               </HelperText>
-              <View style={{ marginTop: 5, alignSelf: 'flex-start', marginBottom: 10 }}>
-                <Button
-                  mode='contained-tonal'
-                  onPress={() => sendReport(questionID, sendData, setSendError, bottomSheetRef, setShowSnackBar)}
-                >
+              <View style={styles.submitBtnWrapper}>
+                <Button mode='contained-tonal' onPress={handleSendReport}>
                   <MyText>送出</MyText>
                 </Button>
               </View>
@@ -141,5 +154,27 @@ const QuestionBottomView = ({ setShowSnackBar, showBottomView, setShowBottomView
     </GestureHandlerRootView>
   )
 }
+
+const styles = StyleSheet.create({
+  fontSizeContainer: {
+    ...questionStyle.contentStyle,
+    alignItems: 'center'
+  },
+  fontSizeLabel: {
+    width: '100%',
+    textAlign: 'center'
+  },
+  slider: {
+    width: 200
+  },
+  reportInput: {
+    height: 120
+  },
+  submitBtnWrapper: {
+    marginTop: 5,
+    alignSelf: 'flex-start',
+    marginBottom: 10
+  }
+})
 
 export default QuestionBottomView

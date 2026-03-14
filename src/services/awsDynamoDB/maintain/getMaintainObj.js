@@ -16,7 +16,7 @@ const getMaintainObj = async () => {
 
 		return result.data.getMaintain
 	} catch (error) {
-		console.error('getQuestions error:　', error)
+		console.error('getMaintainObj error:', error)
 		return null
 	}
 }

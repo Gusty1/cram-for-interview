@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, memo } from 'react'
 import { View } from 'react-native'
 import { Card } from 'react-native-paper'
 import MyText from '../MyComponents/MyText'
@@ -37,4 +37,4 @@ const SubjectCard = ({ subjectObj, navigation }) => {
   )
 }
 
-export default SubjectCard
+export default memo(SubjectCard)

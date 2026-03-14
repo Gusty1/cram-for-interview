@@ -7,11 +7,11 @@ import { StyleSheet } from 'react-native';
 export default StyleSheet.create({
   // 每日一句的容器
   sentenceContainer: {
-    borderColor: 'gray',
-    borderWidth: 2,
+    borderColor: '#999',
+    borderWidth: 1,
     borderRadius: 10,
-    paddingLeft: 10,
-    paddingRight: 10,
+    paddingHorizontal: 10,
+    paddingBottom: 10,
   },
   //每日一句的title row
   sentenceRow: {
@@ -19,6 +19,11 @@ export default StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'flex-start',
     flexWrap: 'nowrap',
+  },
+  sentenceAuthor: {
+    textAlign: 'right',
+    marginTop: 6,
+    fontStyle: 'italic',
   },
   //subtitleFilterModal的容器
   subtitleFilterModalContainer: {

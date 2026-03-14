@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { View, Alert } from 'react-native'
 import { IconButton } from 'react-native-paper'
 import MyText from '../MyComponents/MyText'
@@ -14,12 +14,12 @@ const getSentenceAry = async (setSentenceObj) => {
       setSentenceObj(response[randomSentenceNum])
     }
   } catch (e) {
-    Alert(defaultSetting.errMsg)
+    Alert.alert(defaultSetting.errMsg)
     console.log('getSentenceAry error', e)
   }
 }
 
-//每日一句的組件
+/** 首頁每日一句組件 */
 const Sentence = () => {
   const [sentenceObj, setSentenceObj] = useState(null)
 
@@ -27,22 +27,24 @@ const Sentence = () => {
     getSentenceAry(setSentenceObj)
   }, [])
 
+  const handleReload = useCallback(() => getSentenceAry(setSentenceObj), [])
+
   if (!sentenceObj) return null
 
   return (
     <View style={homeStyle.sentenceContainer}>
       <View style={homeStyle.sentenceRow}>
-        <MyText style={{ padding: 0, margin: 0 }}>每日一句：</MyText>
+        <MyText>每日一句：</MyText>
         <IconButton
           icon='reload'
           mode='contained-tonal'
           size={16}
-          onPress={() => getSentenceAry(setSentenceObj)}
+          onPress={handleReload}
         />
       </View>
       <View>
-        <MyText >{sentenceObj.sentence}</MyText>
-        <MyText style={{ textAlign: 'right' }}>—{sentenceObj.author}</MyText>
+        <MyText>{sentenceObj.sentence}</MyText>
+        <MyText style={homeStyle.sentenceAuthor}>— {sentenceObj.author}</MyText>
       </View>
     </View>
   )

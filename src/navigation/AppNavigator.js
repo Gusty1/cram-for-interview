@@ -1,12 +1,11 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo, useCallback } from 'react'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { NavigationContainer } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { AntDesign, Entypo, Ionicons } from '@expo/vector-icons'
 import { MD3DarkTheme, MD3LightTheme, adaptNavigationTheme, PaperProvider } from 'react-native-paper'
-import uuid from 'react-native-uuid'
 import ErrorBoundary from 'react-native-error-boundary'
-import { NoNetModal, MaintainModal, QuestionHeaderRight, ErrorView } from '../components'
+import { NoNetModal, MaintainModal, QuestionHeaderRight, ErrorView, MyText } from '../components'
 import useStore from '../store'
 import SubjectScreen from './screens/HomeScreen/SubjectScreen'
 import SubtitleScreen from './screens/HomeScreen/SubtitleScreen'
@@ -15,7 +14,6 @@ import FavoriteScreen from './screens/FavoriteScreen'
 import SettingScreen from './screens/SettingScreen'
 import AddQuestion from './screens/SettingScreen/AddQuestion'
 import { navigationSetting } from '../constants/'
-import { MyText } from '../components'
 import { sqliteInit, getMaintainObj } from '../services'
 
 const { LightTheme } = adaptNavigationTheme({
@@ -28,7 +26,32 @@ const { DarkTheme } = adaptNavigationTheme({
 const Tab = createBottomTabNavigator()
 const Stack = createNativeStackNavigator()
 
-// home螢幕的stack
+/** 預先建立暗色/亮色主題物件，避免每次 render 重建 */
+const DARK_THEME = {
+  ...MD3DarkTheme,
+  ...DarkTheme,
+  colors: {
+    ...MD3DarkTheme.colors,
+    ...DarkTheme.colors,
+  },
+  fonts: {
+    ...MD3DarkTheme.fonts,
+  },
+}
+
+const LIGHT_THEME = {
+  ...MD3LightTheme,
+  ...LightTheme,
+  colors: {
+    ...MD3LightTheme.colors,
+    ...LightTheme.colors,
+  },
+  fonts: {
+    ...MD3LightTheme.fonts,
+  },
+}
+
+// home 螢幕的 stack
 const HomeStack = () => {
   return (
     <Stack.Navigator initialRouteName='SubjectScreen'>
@@ -82,7 +105,7 @@ const HomeStack = () => {
   )
 }
 
-//收藏螢幕的stack
+// 收藏螢幕的 stack
 const FavoriteStack = () => {
   return (
     <Stack.Navigator initialRouteName='FavoriteScreen'>
@@ -119,7 +142,7 @@ const FavoriteStack = () => {
   )
 }
 
-//設定螢幕的stack
+// 設定螢幕的 stack
 const SettingStack = () => {
   return (
     <Stack.Navigator>
@@ -201,27 +224,26 @@ const BottomTabs = () => {
 const AppNavigator = () => {
   const { setting, getSetting, isConnected, initNetworkListener, favoriteList, getFavoriteList,
     thumbList, getThumbList } = useStore()
-  const [screenChange, setScreenChange] = useState(null)
+  // 改用計數器遞增取代 uuid.v4()，避免每次都產生新字串物件
+  const [screenChange, setScreenChange] = useState(0)
   const [maintainInfo, setMaintainInfo] = useState(null)
 
-  //初次進入檢查sqlite有無初始化，有的話就把取得本地資料並放到store
+  // 初次載入：取得設定、初始化 SQLite、啟動網路監聽
   useEffect(() => {
+    getSetting()
     const initSql = async () => {
       await sqliteInit();
       if (!favoriteList) getFavoriteList()
       if (!thumbList) getThumbList()
     }
     initSql()
+    initNetworkListener()
   }, [])
 
-  useEffect(() => {
-    initNetworkListener() // 啟動網路監聽
-  }, [initNetworkListener])
-
+  // 螢幕切換時檢查是否在維護
   useEffect(() => {
     const getMaintainData = async () => {
       const maintainData = await getMaintainObj()
-      //如果有維護資料且顯示是true就設定維護資訊
       if (maintainData && maintainData?.show) {
         setMaintainInfo(maintainData)
       } else {
@@ -231,43 +253,19 @@ const AppNavigator = () => {
     getMaintainData()
   }, [screenChange])
 
-  if (!setting) {
-    getSetting()
-    return null
-  }
-  //const theme = setting.darkMode ? DarkTheme : LightTheme
-  //我感覺是react-native paper的bug，不知道什麼時候會修復，現在只能先這樣寫
-  const paperTheme = setting.darkMode
-    ? {
-      ...MD3DarkTheme,
-      ...DarkTheme,
-      colors: {
-        ...MD3DarkTheme.colors,
-        ...DarkTheme.colors,
-        // ...theme.dark,
-      },
-      fonts: {
-        ...MD3DarkTheme.fonts,
-        // ...NavigationDarkTheme.fonts,
-        // ...theme.dark,
-      },
-    }
-    : {
-      ...MD3LightTheme,
-      ...LightTheme,
-      colors: {
-        ...MD3LightTheme.colors,
-        ...LightTheme.colors,
-        // ...theme.light,
-      },
-      fonts: {
-        ...MD3LightTheme.fonts,
-        // ...NavigationDefaultTheme.fonts,
-        // ...theme.light,
-      },
-    };
+  // 穩定的螢幕切換回調，使用計數器遞增
+  const handleStateChange = useCallback(() => {
+    setScreenChange(prev => prev + 1)
+  }, [])
 
-  //螢幕切換時都給他一個新的id，讓他更新狀態，然後去檢查是否在維護
+  // 主題物件使用 useMemo，只在 darkMode 改變時重建
+  const paperTheme = useMemo(
+    () => setting?.darkMode ? DARK_THEME : LIGHT_THEME,
+    [setting?.darkMode]
+  )
+
+  if (!setting) return null
+
   return (
     <PaperProvider theme={paperTheme}>
       {isConnected ? (
@@ -276,7 +274,7 @@ const AppNavigator = () => {
         ) : (
           <ErrorBoundary FallbackComponent={ErrorView}>
             <NavigationContainer theme={paperTheme}
-              onStateChange={() => setScreenChange(uuid.v4())}>
+              onStateChange={handleStateChange}>
               <BottomTabs />
             </NavigationContainer>
           </ErrorBoundary>

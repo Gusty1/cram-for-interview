@@ -18,7 +18,7 @@ const SettingScreen = ({ navigation, route }) => {
   const onToggleDarkSwitch = () => {
     setSetting({
       ...setting,
-      darkMode: !setting.darkMode
+      darkMode: !setting?.darkMode
     })
   }
 
@@ -77,19 +77,15 @@ const SettingScreen = ({ navigation, route }) => {
       <View style={settingStyle.settingRow}>
         <MyText style={{ fontSize: 16 }}>黑暗模式</MyText>
         <Switch
-          value={setting && setting.darkMode}
+          value={setting?.darkMode}
           onValueChange={onToggleDarkSwitch}
         />
       </View>
 
-      <View style={{
-        gap: 10,
-        alignSelf: 'flex-start',
-        marginVertical: 10,
-      }}>
-        <Button icon="note-remove" mode="contained" onPress={() => clearLocalData()}>
-          <MyText>清除本地資料</MyText>
-        </Button>
+      <Divider style={{ marginVertical: 10 }} />
+
+      {/* 功能區 */}
+      <View style={{ gap: 10, alignSelf: 'flex-start' }}>
         <Button icon="email" mode="contained"
           buttonColor='skyblue'
           onPress={() => sendEmail()}>
@@ -100,7 +96,18 @@ const SettingScreen = ({ navigation, route }) => {
           <MyText>提供問題</MyText>
         </Button>
       </View>
-      <Divider />
+
+      <Divider style={{ marginVertical: 10 }} />
+
+      {/* 危險操作區 */}
+      <View style={{ alignSelf: 'flex-start' }}>
+        <Button icon="note-remove" mode="outlined" textColor='#E74C3C'
+          onPress={() => clearLocalData()}>
+          <MyText style={{ color: '#E74C3C' }}>清除本地資料</MyText>
+        </Button>
+      </View>
+
+      <View style={{ flex: 1 }} />
       <MyText style={settingStyle.tipText}>祝各位求職順利!!!</MyText>
       <MyText style={settingStyle.tipText}>v{version}</MyText>
       <Snackbar
@@ -108,10 +115,10 @@ const SettingScreen = ({ navigation, route }) => {
         onDismiss={() => setShowSnackBar('')}
         duration={3000}
         style={{
-          margin: 'auto',
+          alignSelf: 'center',
           width: 100,
           marginBottom: 30,
-          backgroundColor: setting.darkMode ? '#3d3a27' : '#ffebcd'
+          backgroundColor: setting?.darkMode ? '#3d3a27' : '#ffebcd'
         }}
       >
         <MyText style={{ textAlign: "center" }}>{showSnackBar}</MyText>
