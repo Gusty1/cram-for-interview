@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback, useRef, useMemo } from 'react'
-import { View } from 'react-native'
-import { ActivityIndicator, IconButton, HelperText } from 'react-native-paper'
+import { View, StyleSheet } from 'react-native'
+import { ActivityIndicator, IconButton } from 'react-native-paper'
 import uuid from 'react-native-uuid'
 import DragList from 'react-native-draglist'
 import { useFocusEffect } from '@react-navigation/native';
@@ -144,16 +144,17 @@ const FavoriteScreen = ({ navigation }) => {
 
   // 由於呼叫方法會整個刷新，所以先把資料刪除再去呼叫刪除方法
   const delFavorite = useCallback((subtitle, id) => {
-    const newFavorites = favorites.map((item) => {
-      if (item.subtitle === subtitle) {
-        return { ...item, questions: item.questions.filter(x => x.id !== id) }
-      }
-      return item
-    }).filter(item => item.questions.length > 0)
     isDelRef.current = true
     deleteFavorite(id)
-    setFavorites(newFavorites)
-  }, [favorites])
+    setFavorites(prev =>
+      prev.map((item) => {
+        if (item.subtitle === subtitle) {
+          return { ...item, questions: item.questions.filter(x => x.id !== id) }
+        }
+        return item
+      }).filter(item => item.questions.length > 0)
+    )
+  }, [deleteFavorite])
 
   // 移動後的回調方法，就是位置的切換
   const onReordered = useCallback((fromIndex, toIndex) => {
@@ -196,19 +197,22 @@ const FavoriteScreen = ({ navigation }) => {
     )
   }
 
+  const isDark = setting?.darkMode
+
   return (
-    <View style={{ flex: 1 }}>
-      <HelperText type="info" visible={true}>
-        <MyText style={{ textAlign: 'center' }}>每個項目可以長按拖曳移動位置</MyText>
-      </HelperText>
+    <View style={fStyles.container}>
+      <MyText style={{ ...fStyles.hint, color: isDark ? '#777' : '#aaa' }}>
+        長按項目可拖曳排序
+      </MyText>
       <DragList
-        style={{ height: "100%" }}
+        style={fStyles.dragList}
         data={favorites}
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
         onReordered={onReordered}
         refreshing={loading}
         onRefresh={handleRefresh}
+        contentContainerStyle={fStyles.listContent}
       />
       <SubtitleFilterModal
         filterModalShow={filterModalShow}
@@ -216,10 +220,9 @@ const FavoriteScreen = ({ navigation }) => {
         showSubtitleItems={showSubtitleItems}
       />
       <IconButton
-        style={commonStyle.rightBottomBtn}
-        mode="contained-tonal"
-        iconColor='#6b4faa'
-        size={30}
+        style={fStyles.filterBtn}
+        mode="contained"
+        size={26}
         icon="filter-variant"
         onPress={handleFilterPress}
         disabled={loading || favorites.length === 0}
@@ -227,5 +230,28 @@ const FavoriteScreen = ({ navigation }) => {
     </View>
   )
 }
+
+const fStyles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  hint: {
+    textAlign: 'center',
+    fontSize: 12,
+    paddingVertical: 6,
+  },
+  dragList: {
+    height: '100%',
+  },
+  listContent: {
+    paddingHorizontal: 10,
+    paddingBottom: 80,
+  },
+  filterBtn: {
+    position: 'absolute',
+    bottom: 20,
+    right: 20,
+  },
+})
 
 export default FavoriteScreen

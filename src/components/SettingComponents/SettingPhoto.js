@@ -1,8 +1,8 @@
 import { memo, useCallback } from 'react'
-import { Image, StyleSheet } from 'react-native'
+import { Image, View, StyleSheet } from 'react-native'
 import { IconButton } from 'react-native-paper'
 
-/** 新增問題時顯示的圖片預覽 */
+/** 新增問題時顯示的圖片預覽，X 按鈕浮在圖片右上角 */
 const SettingPhoto = memo(({ imageObj, deleteImages }) => {
 	const handleDelete = useCallback(
 		() => deleteImages(imageObj.id),
@@ -10,31 +10,36 @@ const SettingPhoto = memo(({ imageObj, deleteImages }) => {
 	)
 
 	return (
-		<>
+		<View style={styles.wrapper}>
 			<Image style={styles.image} source={{ uri: imageObj.uri }} />
 			<IconButton
-				icon="close"
-				mode='contained'
-				size={18}
-				iconColor='red'
+				icon="close-circle"
+				size={22}
+				iconColor='#fff'
+				containerColor='rgba(0,0,0,0.55)'
 				onPress={handleDelete}
 				style={styles.deleteBtn}
 			/>
-		</>
+		</View>
 	)
 })
 
 const styles = StyleSheet.create({
+	wrapper: {
+		position: 'relative',
+	},
 	image: {
 		width: 110,
 		height: 150,
-		borderRadius: 5,
+		borderRadius: 8,
 		borderWidth: 1,
+		borderColor: '#ddd',
 	},
 	deleteBtn: {
 		position: 'absolute',
-		right: 0,
-		top: 0,
+		right: -8,
+		top: -8,
+		margin: 0,
 	},
 })
 

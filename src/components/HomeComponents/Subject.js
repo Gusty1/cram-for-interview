@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { View, FlatList, Alert } from 'react-native'
+import { View, FlatList, Alert, StyleSheet } from 'react-native'
 import { ActivityIndicator } from 'react-native-paper'
 import uuid from 'react-native-uuid'
 import { defaultSetting } from '../../constants'
@@ -7,7 +7,7 @@ import SubjectCard from './SubjectCard'
 import { commonStyle } from '../../styles'
 import useStore from '../../store'
 
-//主題的容器
+/** 主題列表容器 */
 const Subject = ({ navigation }) => {
   const [subjectList, setSubjectList] = useState([])
   const [loading, setLoading] = useState(true)
@@ -16,14 +16,11 @@ const Subject = ({ navigation }) => {
   const getSubjectList = useCallback(async (forceRefresh = false) => {
     try {
       setLoading(true)
-      // 使用快取取得主題列表（已在 cacheStore 中排序）
       const response = await getCachedSubjects(forceRefresh)
       const result = [...response]
-      //使用FlatList如果，每行顯示不足3個，會占滿版面，使佈局變得很怪，所以不足補上
-      if (result.length % 3 !== 0) {
-        for (let i = 0; i <= 3 - (result.length % 3); i++) {
-          result.push({ id: uuid.v4() })
-        }
+      // FlatList numColumns=2，不足補位以維持佈局
+      if (result.length % 2 !== 0) {
+        result.push({ id: uuid.v4() })
       }
       setSubjectList(result)
     } catch (err) {
@@ -39,27 +36,40 @@ const Subject = ({ navigation }) => {
   }, [])
 
   return (
-    <View style={{ flex: 1 }}>
-      {loading ? (<ActivityIndicator size='large' style={commonStyle.defaultLoading} />) :
-        (
-          <FlatList
-            data={subjectList}
-            renderItem={({ item }) => (
-              <SubjectCard subjectObj={item} navigation={navigation} />
-            )}
-            keyExtractor={(item) => item.id}
-            numColumns={3}
-            columnWrapperStyle={{
-              justifyContent: 'space-between',
-              gap: 10,
-              marginTop: 20
-            }}
-            refreshing={loading}
-            onRefresh={() => getSubjectList(true)}
-          />
-        )}
+    <View style={styles.container}>
+      {loading ? (
+        <ActivityIndicator size='large' style={commonStyle.defaultLoading} />
+      ) : (
+        <FlatList
+          data={subjectList}
+          renderItem={({ item }) => (
+            <SubjectCard subjectObj={item} navigation={navigation} />
+          )}
+          keyExtractor={(item) => item.id}
+          numColumns={2}
+          columnWrapperStyle={styles.row}
+          contentContainerStyle={styles.listContent}
+          refreshing={loading}
+          onRefresh={() => getSubjectList(true)}
+          showsVerticalScrollIndicator={false}
+        />
+      )}
     </View>
   )
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    marginTop: 12,
+  },
+  row: {
+    gap: 12,
+    marginBottom: 12,
+  },
+  listContent: {
+    paddingBottom: 8,
+  },
+})
 
 export default Subject

@@ -34,7 +34,7 @@ const Sentence = () => {
   return (
     <View style={homeStyle.sentenceContainer}>
       <View style={homeStyle.sentenceRow}>
-        <MyText>每日一句：</MyText>
+        <MyText style={homeStyle.sentenceLabel}>每日一句</MyText>
         <IconButton
           icon='reload'
           mode='contained-tonal'
@@ -42,10 +42,8 @@ const Sentence = () => {
           onPress={handleReload}
         />
       </View>
-      <View>
-        <MyText>{sentenceObj.sentence}</MyText>
-        <MyText style={homeStyle.sentenceAuthor}>— {sentenceObj.author}</MyText>
-      </View>
+      <MyText style={homeStyle.sentenceText}>{sentenceObj.sentence}</MyText>
+      <MyText style={homeStyle.sentenceAuthor}>— {sentenceObj.author}</MyText>
     </View>
   )
 }

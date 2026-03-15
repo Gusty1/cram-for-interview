@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { View, Alert } from 'react-native'
-import { ActivityIndicator, IconButton, HelperText } from 'react-native-paper'
+import { View, Alert, StyleSheet } from 'react-native'
+import { ActivityIndicator, IconButton } from 'react-native-paper'
 import DragList from 'react-native-draglist';
 import uuid from 'react-native-uuid'
 import { SubtitleList, MyText, SubtitleFilterModal } from '../../../../components'
@@ -29,6 +29,7 @@ const SubtitleScreen = ({ navigation, route }) => {
   // 集中管理各 subtitle 的展開狀態，避免子組件重建時丟失
   const [expandedMap, setExpandedMap] = useState({})
   const { favoriteList, getCachedSubtitles, getCachedQuestionsBatch } = useStore()
+  const isDark = useStore((s) => s.setting?.darkMode)
   const { subjectEN } = route.params
 
   //取得全部資料，使用快取 + 批次查詢解決 N+1 問題
@@ -155,40 +156,33 @@ const SubtitleScreen = ({ navigation, route }) => {
     }
   }
 
-  //判斷有沒有資料
-  const judgeSubtitleList = () => {
-    if (subtitleList.length === 0) {
-      return (
-        <View style={commonStyle.defaultLoading}>
-          <MyText style={commonStyle.noDataMsg}>
-            還沒有項目，歡迎提供
-          </MyText>
-        </View>
-      )
-    } else {
-      return (
-        <>
-          <HelperText type="info" visible={true}>
-            <MyText style={{ textAlign: 'center' }}>每個項目可以長按拖曳移動位置</MyText>
-          </HelperText>
-          <DragList
-            style={{ height: "100%" }}
-            data={subtitleList}
-            renderItem={renderItem}
-            keyExtractor={(item) => item.id}
-            onReordered={onReordered}
-            refreshing={loading}
-            onRefresh={() => getSubtitleList(true)}
-          />
-        </>
-      )
-    }
+  if (loading) {
+    return <ActivityIndicator size='large' style={commonStyle.defaultLoading} />
+  }
+
+  if (subtitleList.length === 0) {
+    return (
+      <View style={commonStyle.defaultLoading}>
+        <MyText style={commonStyle.noDataMsg}>還沒有項目，歡迎提供</MyText>
+      </View>
+    )
   }
 
   return (
-    <View style={{ flex: 1 }}>
-      {loading ? (<ActivityIndicator size='large' style={commonStyle.defaultLoading} />) :
-        (judgeSubtitleList())}
+    <View style={styles.container}>
+      <MyText style={{ ...styles.hint, color: isDark ? '#777' : '#aaa' }}>
+        長按項目可拖曳排序
+      </MyText>
+      <DragList
+        style={styles.dragList}
+        data={subtitleList}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.id}
+        onReordered={onReordered}
+        refreshing={loading}
+        onRefresh={() => getSubtitleList(true)}
+        contentContainerStyle={styles.listContent}
+      />
       <SubtitleFilterModal
         filterModalShow={filterModalShow}
         filterSubtile={filterSubtile}
@@ -197,13 +191,36 @@ const SubtitleScreen = ({ navigation, route }) => {
       <IconButton
         mode='contained'
         icon='filter-variant'
-        size={30}
-        style={commonStyle.rightBottomBtn}
+        size={26}
+        style={styles.filterBtn}
         onPress={() => setFilterModalShow(true)}
         disabled={loading || subtitleList.length === 0}
       />
     </View>
   )
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  hint: {
+    textAlign: 'center',
+    fontSize: 12,
+    paddingVertical: 6,
+  },
+  dragList: {
+    height: '100%',
+  },
+  listContent: {
+    paddingHorizontal: 10,
+    paddingBottom: 80,
+  },
+  filterBtn: {
+    position: 'absolute',
+    bottom: 20,
+    right: 20,
+  },
+})
 
 export default SubtitleScreen

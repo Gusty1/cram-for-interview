@@ -5,35 +5,22 @@
 import { StyleSheet } from 'react-native'
 
 export default StyleSheet.create({
-  // 第一列的樣式
-  settingRow: {
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    flexDirection: 'row'
-  },
   //資訊字的樣式
   tipText: {
     color: '#999',
     textAlign: 'center'
   },
-  //圖片預覽的容器
-  imageContainer: {
-    flexDirection: 'row', gap: 20,
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    flexWrap: 'wrap'
+  //Snackbar 外層容器（row + center 讓 Snackbar 縮至內容寬度）
+  snackbarOuter: {
+    flexDirection: 'row',
+    justifyContent: 'center',
   },
-  //圖片的子容器
-  imageItem: {
-    width: 110,
-    height: 150,
-    borderWidth: 1,
-    borderRadius: 5
+  //底部提示訊息條（自適應寬度）
+  snackbar: {
+    flexGrow: 0,
+    flexShrink: 1,
+    marginBottom: 30,
+    paddingHorizontal: 8,
+    borderRadius: 20,
   },
-  //送出資料的modal樣式
-  sendModal: {
-    padding: 20,
-    marginHorizontal: 80,
-    borderRadius: 10,
-  }
 })

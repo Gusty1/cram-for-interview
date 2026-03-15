@@ -26,7 +26,7 @@ const ActionBtn = memo(({ icon, color, label, onPress, darkMode }) => {
         pressed && styles.actionBtnPressed
       ]}
     >
-      <MaterialCommunityIcons name={icon} size={28} color={color} />
+      <MaterialCommunityIcons name={icon} size={26} color={color} />
       {label ? <MyText style={[styles.actionLabel, { color }]}>{label}</MyText> : null}
     </Pressable>
   )
@@ -50,6 +50,8 @@ const Questions = memo(({ curQuestion, isFirst, isLast, pageIndex, ctrlMethod, s
   const deleteThumb = useStore((s) => s.deleteThumb)
   const answerShow = useStore((s) => s.answerShow)
 
+  const isDark = setting?.darkMode
+
   useEffect(() => {
     const isFavorite = favoriteList?.some((item) => item.questionID === curQuestion.id) ?? false
     const isThumb = thumbList?.some((item) => item.questionID === curQuestion.id) ?? false
@@ -57,12 +59,6 @@ const Questions = memo(({ curQuestion, isFirst, isLast, pageIndex, ctrlMethod, s
   }, [curQuestion, favoriteList, thumbList])
 
   const mdStyle = useMemo(() => markdownStyle(setting), [setting])
-
-  const snackbarStyle = useMemo(() => ({
-    alignSelf: 'center',
-    width: 100,
-    backgroundColor: setting?.darkMode ? '#3d3a27' : '#ffebcd'
-  }), [setting?.darkMode])
 
   // -- 操作回調 --
   const handleThumbPress = useCallback(() => {
@@ -116,8 +112,8 @@ const Questions = memo(({ curQuestion, isFirst, isLast, pageIndex, ctrlMethod, s
   return (
     <View style={styles.container}>
       {/* 題目標題 */}
-      <View style={styles.questionTitle}>
-        <MyText variant='titleLarge'>
+      <View style={[styles.questionTitle, { backgroundColor: isDark ? '#1e1e2e' : '#f8f8fc' }]}>
+        <MyText variant='titleLarge' style={styles.questionText}>
           {thisQuestion.question}
         </MyText>
       </View>
@@ -146,46 +142,50 @@ const Questions = memo(({ curQuestion, isFirst, isLast, pageIndex, ctrlMethod, s
       </View>
 
       {/* 右側抖音風格操作列 - 面試模式時隱藏 */}
-      {!answerShow && <View style={styles.actionBar}>
-        <ActionBtn
-          icon={thisQuestion.thumb ? 'thumb-up' : 'thumb-up-outline'}
-          color='#4A90D9'
-          onPress={handleThumbPress}
-          darkMode={setting?.darkMode}
-        />
-        <ActionBtn
-          icon={thisQuestion.favorite ? 'cards-heart' : 'cards-heart-outline'}
-          color='#E74C3C'
-          onPress={handleFavoritePress}
-          darkMode={setting?.darkMode}
-        />
-        <ActionBtn
-          icon='content-copy'
-          color='#888'
-          onPress={handleCopy}
-          darkMode={setting?.darkMode}
-        />
-        <ActionBtn
-          icon='format-font'
-          color='#888'
-          onPress={handleFontSize}
-          darkMode={setting?.darkMode}
-        />
-        <ActionBtn
-          icon='bug-outline'
-          color='#888'
-          onPress={handleBugReport}
-          darkMode={setting?.darkMode}
-        />
-      </View>}
+      {!answerShow && (
+        <View style={styles.actionBar}>
+          <ActionBtn
+            icon={thisQuestion.thumb ? 'thumb-up' : 'thumb-up-outline'}
+            color='#4A90D9'
+            onPress={handleThumbPress}
+            darkMode={isDark}
+          />
+          <ActionBtn
+            icon={thisQuestion.favorite ? 'cards-heart' : 'cards-heart-outline'}
+            color='#E74C3C'
+            onPress={handleFavoritePress}
+            darkMode={isDark}
+          />
+          <ActionBtn
+            icon='content-copy'
+            color={isDark ? '#aaa' : '#888'}
+            onPress={handleCopy}
+            darkMode={isDark}
+          />
+          <ActionBtn
+            icon='format-font'
+            color={isDark ? '#aaa' : '#888'}
+            onPress={handleFontSize}
+            darkMode={isDark}
+          />
+          <ActionBtn
+            icon='bug-outline'
+            color={isDark ? '#aaa' : '#888'}
+            onPress={handleBugReport}
+            darkMode={isDark}
+          />
+        </View>
+      )}
 
       {/* 提示訊息 */}
-      <View style={styles.snackbarWrapper}>
+      <View style={styles.snackbarOuter}>
         <Snackbar
           visible={!!showSnackBar}
           onDismiss={handleDismissSnackbar}
-          duration={3000}
-          style={snackbarStyle}
+          duration={1000}
+          style={[styles.snackbar, {
+            backgroundColor: isDark ? '#3d3a27' : '#ffebcd'
+          }]}
         >
           <MyText style={styles.snackbarText}>{showSnackBar}</MyText>
         </Snackbar>
@@ -195,9 +195,8 @@ const Questions = memo(({ curQuestion, isFirst, isLast, pageIndex, ctrlMethod, s
       {!isFirst && (
         <IconButton
           icon='chevron-left'
-          mode='contained-tonal'
-          iconColor='rgba(255, 165, 0, 0.4)'
-          size={40}
+          iconColor={isDark ? 'rgba(255, 200, 100, 0.5)' : 'rgba(255, 165, 0, 0.35)'}
+          size={36}
           onPress={handleLeftSwipe}
           style={styles.swiperBtnLeft}
         />
@@ -207,8 +206,8 @@ const Questions = memo(({ curQuestion, isFirst, isLast, pageIndex, ctrlMethod, s
       {!isLast && (
         <IconButton
           icon='chevron-right'
-          iconColor='rgba(255, 165, 0, 0.4)'
-          size={40}
+          iconColor={isDark ? 'rgba(255, 200, 100, 0.5)' : 'rgba(255, 165, 0, 0.35)'}
+          size={36}
           onPress={handleRightSwipe}
           style={styles.swiperBtnRight}
         />
@@ -219,13 +218,17 @@ const Questions = memo(({ curQuestion, isFirst, isLast, pageIndex, ctrlMethod, s
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
   },
   questionTitle: {
-    padding: 10
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+  },
+  questionText: {
+    lineHeight: 28,
   },
   answerContainer: {
-    flex: 1
+    flex: 1,
   },
   scrollView: {
     position: 'absolute',
@@ -233,57 +236,69 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    padding: 10,
-    zIndex: 4
+    paddingHorizontal: 14,
+    paddingTop: 10,
+    zIndex: 4,
   },
   scrollContent: {
-    paddingBottom: 80
+    paddingBottom: 100,
   },
   answerHideImage: {
     width: '100%',
-    height: 300
+    height: 300,
   },
-  // 右側透明操作列 - 抖音風格
+  // 右側透明操作列
   actionBar: {
     position: 'absolute',
-    right: 12,
-    bottom: 60,
+    right: 10,
+    bottom: 56,
     alignItems: 'center',
     zIndex: 10,
-    gap: 6
+    gap: 10,
   },
   actionBtn: {
     alignItems: 'center',
     justifyContent: 'center',
     width: 44,
     height: 44,
-    borderRadius: 22
+    borderRadius: 22,
   },
   actionBtnPressed: {
-    transform: [{ scale: 0.85 }]
+    transform: [{ scale: 0.85 }],
   },
   actionLabel: {
     fontSize: 10,
-    marginTop: 2
+    marginTop: 2,
   },
-  snackbarWrapper: {
+  // Snackbar 自適應寬度置中
+  snackbarOuter: {
     position: 'absolute',
-    bottom: 36,
+    bottom: 20,
     left: 0,
     right: 0,
-    zIndex: 5
+    flexDirection: 'row',
+    justifyContent: 'center',
+    zIndex: 5,
+  },
+  snackbar: {
+    flexGrow: 0,
+    flexShrink: 1,
+    alignSelf: 'center',
+    borderRadius: 20,
+    paddingHorizontal: 8,
   },
   snackbarText: {
-    textAlign: 'center'
+    textAlign: 'center',
   },
+  // 翻頁按鈕
   swiperBtnLeft: {
     ...questionStyle.swiperBtn,
-    left: 0
+    left: 0,
   },
   swiperBtnRight: {
     ...questionStyle.swiperBtn,
-    right: 0
-  }
+    right: 0,
+  },
 })
 
 export default Questions

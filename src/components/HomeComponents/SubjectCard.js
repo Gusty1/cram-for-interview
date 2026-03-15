@@ -1,22 +1,22 @@
 import { useState, memo } from 'react'
-import { View } from 'react-native'
+import { View, StyleSheet } from 'react-native'
 import { Card } from 'react-native-paper'
 import MyText from '../MyComponents/MyText'
-import { homeStyle } from '../../styles'
 
-//主題卡片
+/** 主題卡片 */
 const SubjectCard = ({ subjectObj, navigation }) => {
   const { zh_name, en_name, image } = subjectObj
   const [error, setError] = useState(false)
 
-  //少於3個卡片的部分用空白的View補上
+  // 補位用的空白卡片
   if (!zh_name) {
-    return <View style={{ flex: 1 }}></View>
+    return <View style={styles.wrapper} />
   }
 
   return (
     <Card
-      style={{ flex: 1 }}
+      style={styles.wrapper}
+      mode="elevated"
       onPress={() =>
         navigation.navigate('SubtitleScreen', {
           subjectEN: en_name,
@@ -24,17 +24,35 @@ const SubjectCard = ({ subjectObj, navigation }) => {
         })
       }
     >
-      <Card.Title
-        title={<MyText style={{ textAlign: 'center' }}>{zh_name}</MyText>}
-        titleVariant='titleLarge'
-      />
       <Card.Cover
-        resizeMode='contain'
+        style={styles.cover}
         source={error ? require('../../assets/images/notFound.png') : { uri: image }}
         onError={() => setError(true)}
       />
+      <View style={styles.titleRow}>
+        <MyText style={styles.title} numberOfLines={1}>{zh_name}</MyText>
+      </View>
     </Card>
   )
 }
+
+const styles = StyleSheet.create({
+  wrapper: {
+    flex: 1,
+  },
+  cover: {
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0,
+  },
+  titleRow: {
+    paddingVertical: 10,
+    paddingHorizontal: 8,
+    alignItems: 'center',
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: '600',
+  },
+})
 
 export default memo(SubjectCard)

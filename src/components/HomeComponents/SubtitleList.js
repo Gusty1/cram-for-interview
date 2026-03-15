@@ -1,6 +1,6 @@
 import { useState, useMemo, useCallback } from 'react'
-import { Image, StyleSheet } from 'react-native'
-import { List, Divider, IconButton } from 'react-native-paper'
+import { Image, View, StyleSheet } from 'react-native'
+import { List, IconButton } from 'react-native-paper'
 import { Fontisto } from '@expo/vector-icons'
 import { defaultSetting } from '../../constants'
 import MyText from '../MyComponents/MyText'
@@ -13,8 +13,8 @@ const SubtitleList = ({ navigation, subtitle, onDragStart, onDragEnd, subjectEN,
   const [error, setError] = useState(false)
   const { en_name, zh_name, image, questions } = subtitle
   const { addFavorite, deleteFavorite } = useStore()
+  const isDark = useStore((s) => s.setting?.darkMode)
 
-  // 使用 useMemo 產生排序後的新陣列，避免直接 mutate props
   const sortedQuestions = useMemo(
     () => [...questions].sort((a, b) => b.useful - a.useful),
     [questions]
@@ -31,23 +31,24 @@ const SubtitleList = ({ navigation, subtitle, onDragStart, onDragEnd, subjectEN,
     />
   ), [error, image, handleImageError])
 
-  const description = sortedQuestions.length === 0
-    ? <MyText style={styles.descText}>還沒有題目，歡迎提供</MyText>
-    : <MyText style={styles.descText}>共{sortedQuestions.length}題</MyText>
+  const questionCount = sortedQuestions.length
+  const description = questionCount === 0
+    ? <MyText style={styles.descEmpty}>還沒有題目，歡迎提供</MyText>
+    : <MyText style={styles.descCount}>{questionCount} 題</MyText>
 
   return (
-    <>
+    <View style={[styles.accordionCard, { backgroundColor: isDark ? '#2a2a2a' : '#fff', borderColor: isDark ? '#444' : '#eee' }]}>
       <List.Accordion
-        title={<MyText>{zh_name}</MyText>}
-        titleStyle={styles.titleStyle}
+        title={<MyText style={styles.titleText}>{zh_name}</MyText>}
         expanded={expanded}
         onPress={handleToggleExpand}
         onLongPress={onDragStart}
         onPressOut={onDragEnd}
         description={description}
         left={renderLeft}
+        style={styles.accordion}
       >
-        {sortedQuestions.map((item) => (
+        {sortedQuestions.map((item, index) => (
           <SubtitleListItem
             key={item.id}
             item={item}
@@ -57,16 +58,17 @@ const SubtitleList = ({ navigation, subtitle, onDragStart, onDragEnd, subjectEN,
             subjectEN={subjectEN}
             addFavorite={addFavorite}
             deleteFavorite={deleteFavorite}
+            isLast={index === sortedQuestions.length - 1}
+            isDark={isDark}
           />
         ))}
       </List.Accordion>
-      <Divider />
-    </>
+    </View>
   )
 }
 
-/** 單一題目列表項目 - 抽出避免父層 re-render 時重建 inline functions */
-const SubtitleListItem = ({ item, navigation, en_name, zh_name, subjectEN, addFavorite, deleteFavorite }) => {
+/** 單一題目列表項目 */
+const SubtitleListItem = ({ item, navigation, en_name, zh_name, subjectEN, addFavorite, deleteFavorite, isLast, isDark }) => {
   const handlePress = useCallback(() => {
     navigation.navigate('QuestionScreen', {
       questionID: item.id,
@@ -86,7 +88,8 @@ const SubtitleListItem = ({ item, navigation, en_name, zh_name, subjectEN, addFa
   const renderLeft = useCallback((props) => (
     <Fontisto
       name='fire'
-      color='red'
+      color='#ff6b35'
+      size={16}
       style={props.style}
     />
   ), [])
@@ -94,43 +97,77 @@ const SubtitleListItem = ({ item, navigation, en_name, zh_name, subjectEN, addFa
   const renderRight = useCallback((props) => (
     <IconButton
       icon={item.favorite ? 'cards-heart' : 'cards-heart-outline'}
-      iconColor='pink'
+      iconColor={item.favorite ? '#E74C3C' : '#ccc'}
+      size={20}
       style={props.style}
       onPress={handleFavoritePress}
     />
   ), [item.favorite, handleFavoritePress])
 
   return (
-    <List.Item
-      titleStyle={styles.itemTitleStyle}
-      title={<MyText>{item.question}</MyText>}
-      onPress={handlePress}
-      description={
-        item.useful > defaultSetting.hotUsefulCount
-          ? <MyText style={styles.descText}>有{item.useful}個人覺得這個題目有用</MyText>
+    <>
+      {!isLast && <View style={[styles.itemDivider, { borderColor: isDark ? '#3a3a3a' : '#f0f0f0' }]} />}
+      <List.Item
+        title={<MyText style={styles.itemTitle}>{item.question}</MyText>}
+        onPress={handlePress}
+        description={isHot
+          ? <MyText style={styles.hotDesc}>{item.useful} 人覺得有用</MyText>
           : null
-      }
-      left={isHot ? renderLeft : undefined}
-      right={renderRight}
-    />
+        }
+        left={isHot ? renderLeft : undefined}
+        right={renderRight}
+        style={styles.listItem}
+      />
+    </>
   )
 }
 
 const styles = StyleSheet.create({
+  accordionCard: {
+    marginBottom: 10,
+    borderRadius: 12,
+    borderWidth: 1,
+    overflow: 'hidden',
+  },
+  accordion: {
+    paddingVertical: 4,
+  },
   accordionImage: {
     width: 40,
-    height: 40
+    height: 40,
+    borderRadius: 8,
   },
-  titleStyle: {
+  titleText: {
     fontSize: 16,
-    fontWeight: 'bold'
+    fontWeight: '600',
   },
-  itemTitleStyle: {
-    fontSize: 14
+  descCount: {
+    fontSize: 12,
+    color: '#888',
+    marginTop: 2,
   },
-  descText: {
-    fontSize: 12
-  }
+  descEmpty: {
+    fontSize: 12,
+    color: '#bbb',
+    fontStyle: 'italic',
+    marginTop: 2,
+  },
+  listItem: {
+    paddingVertical: 0,
+    paddingLeft: 16,
+  },
+  itemTitle: {
+    fontSize: 14,
+  },
+  itemDivider: {
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    marginLeft: 16,
+  },
+  hotDesc: {
+    fontSize: 11,
+    color: '#ff6b35',
+    marginTop: 1,
+  },
 })
 
 export default SubtitleList

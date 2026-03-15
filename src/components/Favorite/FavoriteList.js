@@ -1,12 +1,13 @@
 import { memo, useState, useMemo, useCallback } from 'react'
 import { Image, View, StyleSheet } from 'react-native'
-import { List, IconButton, Divider } from 'react-native-paper'
+import { List, IconButton } from 'react-native-paper'
 import MyText from '../MyComponents/MyText'
+import useStore from '../../store'
 
 const FALLBACK_IMAGE = require('../../assets/images/notFound.png')
 
 /** 單一收藏題目項目 */
-const FavoriteItem = memo(({ item, index, navigation, subtitle, subtitleShow, subject, allQuestions, delFavorite }) => {
+const FavoriteItem = memo(({ item, index, navigation, subtitle, subtitleShow, subject, allQuestions, delFavorite, isLast, isDark }) => {
   const handlePress = useCallback(() => {
     navigation.navigate('QuestionScreen', {
       questionID: item.id,
@@ -30,21 +31,25 @@ const FavoriteItem = memo(({ item, index, navigation, subtitle, subtitleShow, su
   const renderRight = useCallback((props) => (
     <IconButton
       icon={item.favorite ? 'cards-heart' : 'cards-heart-outline'}
-      iconColor='pink'
+      iconColor={item.favorite ? '#E74C3C' : '#ccc'}
+      size={20}
       style={props.style}
       onPress={handleDelete}
     />
   ), [item.favorite, handleDelete])
 
   return (
-    <List.Item
-      contentStyle={styles.itemContent}
-      titleStyle={styles.itemTitle}
-      title={<MyText>{item.question}</MyText>}
-      onPress={handlePress}
-      left={renderLeft}
-      right={renderRight}
-    />
+    <>
+      {index > 0 && <View style={[styles.itemDivider, { borderColor: isDark ? '#3a3a3a' : '#f0f0f0' }]} />}
+      <List.Item
+        contentStyle={styles.itemContent}
+        title={<MyText style={styles.itemTitle}>{item.question}</MyText>}
+        onPress={handlePress}
+        left={renderLeft}
+        right={renderRight}
+        style={styles.listItem}
+      />
+    </>
   )
 })
 
@@ -53,14 +58,19 @@ const FavoriteList = ({ navigation, favoriteSubtitle, allQuestions, delFavorite,
   onDragStart, onDragEnd, expanded, toggleExpand }) => {
   const [error, setError] = useState(false)
   const { subtitle, subtitleShow, image, questions, show, subject } = favoriteSubtitle
+  const isDark = useStore((s) => s.setting?.darkMode)
 
   const handleImageError = useCallback(() => setError(true), [])
   const handleToggleExpand = useCallback(() => toggleExpand(subtitle), [toggleExpand, subtitle])
 
-  const accordionStyle = useMemo(
-    () => show ? styles.visible : styles.hidden,
-    [show]
-  )
+  const cardStyle = useMemo(() => [
+    styles.accordionCard,
+    {
+      backgroundColor: isDark ? '#2a2a2a' : '#fff',
+      borderColor: isDark ? '#444' : '#eee',
+      display: show ? 'flex' : 'none',
+    }
+  ], [isDark, show])
 
   const renderLeft = useCallback((props) => (
     <Image
@@ -70,16 +80,21 @@ const FavoriteList = ({ navigation, favoriteSubtitle, allQuestions, delFavorite,
     />
   ), [error, image, handleImageError])
 
+  const questionCount = questions.length
+  const description = questionCount === 0
+    ? <MyText style={styles.descEmpty}>沒有收藏的題目</MyText>
+    : <MyText style={styles.descCount}>{questionCount} 題</MyText>
+
   return (
-    <>
+    <View style={cardStyle}>
       <List.Accordion
         expanded={expanded}
         onPress={handleToggleExpand}
         onLongPress={onDragStart}
         onPressOut={onDragEnd}
-        title={<MyText>{subtitleShow}</MyText>}
-        description={<MyText style={styles.descText}>共{questions.length}題</MyText>}
-        style={accordionStyle}
+        title={<MyText style={styles.titleText}>{subtitleShow}</MyText>}
+        description={description}
+        style={styles.accordion}
         left={renderLeft}
       >
         {questions.map((item, index) => (
@@ -93,24 +108,58 @@ const FavoriteList = ({ navigation, favoriteSubtitle, allQuestions, delFavorite,
             subject={subject}
             allQuestions={allQuestions}
             delFavorite={delFavorite}
+            isLast={index === questions.length - 1}
+            isDark={isDark}
           />
         ))}
       </List.Accordion>
-      <Divider />
-    </>
+    </View>
   )
 }
 
 const styles = StyleSheet.create({
+  accordionCard: {
+    marginBottom: 10,
+    borderRadius: 12,
+    borderWidth: 1,
+    overflow: 'hidden',
+  },
+  accordion: {
+    paddingVertical: 4,
+  },
   accordionImage: {
     width: 40,
-    height: 40
+    height: 40,
+    borderRadius: 8,
+  },
+  titleText: {
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  descCount: {
+    fontSize: 12,
+    color: '#888',
+    marginTop: 2,
+  },
+  descEmpty: {
+    fontSize: 12,
+    color: '#bbb',
+    fontStyle: 'italic',
+    marginTop: 2,
+  },
+  listItem: {
+    paddingVertical: 0,
+    paddingLeft: 16,
   },
   itemContent: {
-    flex: 1
+    flex: 1,
   },
   itemTitle: {
-    fontSize: 14
+    fontSize: 14,
+  },
+  itemDivider: {
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    marginLeft: 16,
   },
   indexText: {
     color: '#6b4faa',
@@ -122,15 +171,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  descText: {
-    fontSize: 12
-  },
-  visible: {
-    display: 'flex'
-  },
-  hidden: {
-    display: 'none'
-  }
 })
 
 export default memo(FavoriteList)
