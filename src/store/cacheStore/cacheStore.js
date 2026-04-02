@@ -1,15 +1,15 @@
-import { getSubjects } from '../../services'
-import { getSubtitles, getQuestions } from '../../services'
+import { getSubjects } from "../../services";
+import { getSubtitles, getQuestions } from "../../services";
 
 /**
  * 快取狀態管理
  * 透過 TTL 機制避免重複呼叫 API，資料在有效期內直接從 store 取用
  */
-const CACHE_TTL = 5 * 60 * 1000 // 5 分鐘
+const CACHE_TTL = 5 * 60 * 1000; // 5 分鐘
 
 const isCacheValid = (timestamp) => {
-  return timestamp && Date.now() - timestamp < CACHE_TTL
-}
+  return timestamp && Date.now() - timestamp < CACHE_TTL;
+};
 
 export default (set, get) => {
   return {
@@ -23,14 +23,14 @@ export default (set, get) => {
      * @param {boolean} forceRefresh - 是否強制重新拉取
      */
     getCachedSubjects: async (forceRefresh = false) => {
-      const { cachedSubjects } = get()
+      const { cachedSubjects } = get();
       if (!forceRefresh && isCacheValid(cachedSubjects.timestamp)) {
-        return cachedSubjects.data
+        return cachedSubjects.data;
       }
-      const data = await getSubjects()
-      data.sort((a, b) => a.en_name.localeCompare(b.en_name))
-      set({ cachedSubjects: { data, timestamp: Date.now() } })
-      return data
+      const data = await getSubjects();
+      data.sort((a, b) => a.en_name.localeCompare(b.en_name));
+      set({ cachedSubjects: { data, timestamp: Date.now() } });
+      return data;
     },
 
     /**
@@ -39,19 +39,19 @@ export default (set, get) => {
      * @param {boolean} forceRefresh - 是否強制重新拉取
      */
     getCachedSubtitles: async (subjectEN, forceRefresh = false) => {
-      const { cachedSubtitles } = get()
-      const cached = cachedSubtitles[subjectEN]
+      const { cachedSubtitles } = get();
+      const cached = cachedSubtitles[subjectEN];
       if (!forceRefresh && cached && isCacheValid(cached.timestamp)) {
-        return cached.data
+        return cached.data;
       }
-      const data = await getSubtitles(subjectEN)
-      set({
+      const data = await getSubtitles(subjectEN);
+      set((state) => ({
         cachedSubtitles: {
-          ...get().cachedSubtitles,
-          [subjectEN]: { data, timestamp: Date.now() }
-        }
-      })
-      return data
+          ...state.cachedSubtitles,
+          [subjectEN]: { data, timestamp: Date.now() },
+        },
+      }));
+      return data;
     },
 
     /**
@@ -60,20 +60,20 @@ export default (set, get) => {
      * @param {boolean} forceRefresh - 是否強制重新拉取
      */
     getCachedQuestions: async (subtitleEN, forceRefresh = false) => {
-      const { cachedQuestions } = get()
-      const cached = cachedQuestions[subtitleEN]
+      const { cachedQuestions } = get();
+      const cached = cachedQuestions[subtitleEN];
       if (!forceRefresh && cached && isCacheValid(cached.timestamp)) {
-        return cached.data
+        return cached.data;
       }
-      const data = await getQuestions(subtitleEN)
-      data.sort((a, b) => b.useful - a.useful)
-      set({
+      const data = await getQuestions(subtitleEN);
+      data.sort((a, b) => b.useful - a.useful);
+      set((state) => ({
         cachedQuestions: {
-          ...get().cachedQuestions,
-          [subtitleEN]: { data, timestamp: Date.now() }
-        }
-      })
-      return data
+          ...state.cachedQuestions,
+          [subtitleEN]: { data, timestamp: Date.now() },
+        },
+      }));
+      return data;
     },
 
     /**
@@ -84,17 +84,17 @@ export default (set, get) => {
      * @returns {Object} { [subtitleEN]: questions[] }
      */
     getCachedQuestionsBatch: async (subtitleENList, forceRefresh = false) => {
-      const { cachedQuestions } = get()
-      const result = {}
-      const toFetch = []
+      const { cachedQuestions } = get();
+      const result = {};
+      const toFetch = [];
 
       // 先從快取取，未命中的加入待拉取清單
       for (const subtitleEN of subtitleENList) {
-        const cached = cachedQuestions[subtitleEN]
+        const cached = cachedQuestions[subtitleEN];
         if (!forceRefresh && cached && isCacheValid(cached.timestamp)) {
-          result[subtitleEN] = cached.data
+          result[subtitleEN] = cached.data;
         } else {
-          toFetch.push(subtitleEN)
+          toFetch.push(subtitleEN);
         }
       }
 
@@ -102,20 +102,22 @@ export default (set, get) => {
       if (toFetch.length > 0) {
         const fetched = await Promise.all(
           toFetch.map(async (subtitleEN) => {
-            const data = await getQuestions(subtitleEN)
-            data.sort((a, b) => b.useful - a.useful)
-            return { subtitleEN, data }
-          })
-        )
-        const newCache = { ...get().cachedQuestions }
+            const data = await getQuestions(subtitleEN);
+            data.sort((a, b) => b.useful - a.useful);
+            return { subtitleEN, data };
+          }),
+        );
+        const updates = {};
         for (const { subtitleEN, data } of fetched) {
-          result[subtitleEN] = data
-          newCache[subtitleEN] = { data, timestamp: Date.now() }
+          result[subtitleEN] = data;
+          updates[subtitleEN] = { data, timestamp: Date.now() };
         }
-        set({ cachedQuestions: newCache })
+        set((state) => ({
+          cachedQuestions: { ...state.cachedQuestions, ...updates },
+        }));
       }
 
-      return result
+      return result;
     },
 
     /** 清除所有快取 */
@@ -123,8 +125,8 @@ export default (set, get) => {
       set({
         cachedSubjects: { data: null, timestamp: null },
         cachedSubtitles: {},
-        cachedQuestions: {}
-      })
-    }
-  }
-}
+        cachedQuestions: {},
+      });
+    },
+  };
+};

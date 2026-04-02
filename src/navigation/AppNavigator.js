@@ -1,30 +1,41 @@
-import { useEffect, useState, useMemo } from 'react'
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
-import { NavigationContainer } from '@react-navigation/native'
-import { createNativeStackNavigator } from '@react-navigation/native-stack'
-import { AntDesign, Entypo, Ionicons } from '@expo/vector-icons'
-import { MD3DarkTheme, MD3LightTheme, adaptNavigationTheme, PaperProvider } from 'react-native-paper'
-import ErrorBoundary from 'react-native-error-boundary'
-import { NoNetModal, MaintainModal, QuestionHeaderRight, ErrorView, MyText } from '../components'
-import useStore from '../store'
-import SubjectScreen from './screens/HomeScreen/SubjectScreen'
-import SubtitleScreen from './screens/HomeScreen/SubtitleScreen'
-import QuestionScreen from './screens/HomeScreen/QuestionScreen'
-import FavoriteScreen from './screens/FavoriteScreen'
-import SettingScreen from './screens/SettingScreen'
-import AddQuestion from './screens/SettingScreen/AddQuestion'
-import { navigationSetting } from '../constants/'
-import { sqliteInit, getMaintainObj } from '../services'
+import { useEffect, useState, useMemo } from "react";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { AntDesign, Entypo, Ionicons } from "@expo/vector-icons";
+import {
+  MD3DarkTheme,
+  MD3LightTheme,
+  adaptNavigationTheme,
+  PaperProvider,
+} from "react-native-paper";
+import ErrorBoundary from "react-native-error-boundary";
+import {
+  NoNetModal,
+  MaintainModal,
+  QuestionHeaderRight,
+  ErrorView,
+  MyText,
+} from "../components";
+import useStore from "../store";
+import SubjectScreen from "./screens/HomeScreen/SubjectScreen";
+import SubtitleScreen from "./screens/HomeScreen/SubtitleScreen";
+import QuestionScreen from "./screens/HomeScreen/QuestionScreen";
+import FavoriteScreen from "./screens/FavoriteScreen";
+import SettingScreen from "./screens/SettingScreen";
+import AddQuestion from "./screens/SettingScreen/AddQuestion";
+import { navigationSetting } from "../constants/";
+import { sqliteInit, getMaintainObj } from "../services";
 
 const { LightTheme } = adaptNavigationTheme({
-  reactNavigationLight: MD3LightTheme
+  reactNavigationLight: MD3LightTheme,
 });
 const { DarkTheme } = adaptNavigationTheme({
-  reactNavigationDark: MD3DarkTheme
-})
+  reactNavigationDark: MD3DarkTheme,
+});
 
-const Tab = createBottomTabNavigator()
-const Stack = createNativeStackNavigator()
+const Tab = createBottomTabNavigator();
+const Stack = createNativeStackNavigator();
 
 /** 預先建立暗色/亮色主題物件，避免每次 render 重建 */
 const DARK_THEME = {
@@ -37,7 +48,7 @@ const DARK_THEME = {
   fonts: {
     ...MD3DarkTheme.fonts,
   },
-}
+};
 
 const LIGHT_THEME = {
   ...MD3LightTheme,
@@ -49,211 +60,222 @@ const LIGHT_THEME = {
   fonts: {
     ...MD3LightTheme.fonts,
   },
-}
+};
 
 // home 螢幕的 stack
 const HomeStack = () => {
   return (
-    <Stack.Navigator initialRouteName='SubjectScreen'>
+    <Stack.Navigator initialRouteName="SubjectScreen">
       <Stack.Screen
-        name='SubjectScreen'
+        name="SubjectScreen"
         component={SubjectScreen}
         options={({ route }) => {
           return {
             ...navigationSetting,
             headerTitle: () => (
-              <MyText variant='headlineLarge'>面試抱佛腳</MyText>
+              <MyText variant="headlineLarge">面試抱佛腳</MyText>
             ),
             tabBarIcon: ({ color, size }) => (
-              <Entypo name='home' size={size} color={color} />
-            )
-          }
+              <Entypo name="home" size={size} color={color} />
+            ),
+          };
         }}
       />
       <Stack.Screen
-        name='SubtitleScreen'
+        name="SubtitleScreen"
         component={SubtitleScreen}
         options={({ route }) => {
           return {
             ...navigationSetting,
             headerTitle: () => (
-              <MyText variant='headlineLarge'>{route.params.subjectZH}</MyText>
+              <MyText variant="headlineLarge">{route.params.subjectZH}</MyText>
             ),
             tabBarIcon: ({ color, size }) => (
-              <Entypo name='home' size={size} color={color} />
-            )
-          }
+              <Entypo name="home" size={size} color={color} />
+            ),
+          };
         }}
       />
       <Stack.Screen
-        name='QuestionScreen'
+        name="QuestionScreen"
         component={QuestionScreen}
         options={({ route }) => {
           return {
             ...navigationSetting,
             headerTitle: () => (
-              <MyText variant='headlineLarge'>{route.params.subtitleZH}</MyText>
+              <MyText variant="headlineLarge">{route.params.subtitleZH}</MyText>
             ),
-            headerRight: () => (<QuestionHeaderRight />),
+            headerRight: () => <QuestionHeaderRight />,
             tabBarIcon: ({ color, size }) => (
-              <Entypo name='home' size={size} color={color} />
-            )
-          }
+              <Entypo name="home" size={size} color={color} />
+            ),
+          };
         }}
       />
     </Stack.Navigator>
-  )
-}
+  );
+};
 
 // 收藏螢幕的 stack
 const FavoriteStack = () => {
   return (
-    <Stack.Navigator initialRouteName='FavoriteScreen'>
+    <Stack.Navigator initialRouteName="FavoriteScreen">
       <Stack.Screen
-        name='FavoriteScreen'
+        name="FavoriteScreen"
         component={FavoriteScreen}
         options={({ route }) => {
           return {
             ...navigationSetting,
             headerTitle: () => {
-              return <MyText variant='headlineLarge'>我的收藏</MyText>;
+              return <MyText variant="headlineLarge">我的收藏</MyText>;
             },
             tabBarIcon: ({ color, size }) => (
-              <AntDesign name='heart' size={size} color={color} />
-            )
-          }
+              <AntDesign name="heart" size={size} color={color} />
+            ),
+          };
         }}
       />
       <Stack.Screen
-        name='QuestionScreen'
+        name="QuestionScreen"
         component={QuestionScreen}
         options={({ route }) => {
           return {
             ...navigationSetting,
-            headerTitle: () => (<MyText variant='headlineLarge'>{route.params.subtitleZH}</MyText>),
-            headerRight: () => (<QuestionHeaderRight />),
+            headerTitle: () => (
+              <MyText variant="headlineLarge">{route.params.subtitleZH}</MyText>
+            ),
+            headerRight: () => <QuestionHeaderRight />,
             tabBarIcon: ({ color, size }) => (
-              <Entypo name='home' size={size} color={color} />
-            )
-          }
+              <Entypo name="home" size={size} color={color} />
+            ),
+          };
         }}
       />
     </Stack.Navigator>
-  )
-}
+  );
+};
 
 // 設定螢幕的 stack
 const SettingStack = () => {
   return (
     <Stack.Navigator>
       <Stack.Screen
-        name='SettingScreen'
+        name="SettingScreen"
         component={SettingScreen}
         options={({ route }) => {
           return {
             ...navigationSetting,
             headerTitle: () => {
-              return <MyText variant='headlineLarge'>設定</MyText>
+              return <MyText variant="headlineLarge">設定</MyText>;
             },
             tabBarIcon: ({ color, size }) => (
-              <Ionicons name='settings-sharp' size={size} color={color} />
-            )
-          }
+              <Ionicons name="settings-sharp" size={size} color={color} />
+            ),
+          };
         }}
       />
       <Stack.Screen
-        name='AddQuestionScreen'
+        name="AddQuestionScreen"
         component={AddQuestion}
         options={({ route }) => {
           return {
             ...navigationSetting,
             headerTitle: () => {
-              return <MyText variant='headlineLarge'>新增題目</MyText>
+              return <MyText variant="headlineLarge">新增題目</MyText>;
             },
             tabBarIcon: ({ color, size }) => (
-              <Ionicons name='settings-sharp' size={size} color={color} />
-            )
-          }
+              <Ionicons name="settings-sharp" size={size} color={color} />
+            ),
+          };
         }}
       />
     </Stack.Navigator>
-  )
-}
+  );
+};
 
 // BottomTabs 用於切換底部導航選項
 const BottomTabs = () => {
   return (
     <Tab.Navigator>
       <Tab.Screen
-        name='HomeTab'
+        name="HomeTab"
         component={HomeStack}
         options={{
           ...navigationSetting,
           headerShown: false,
           tabBarIcon: ({ color, size }) => (
-            <Entypo name='home' size={size} color={color} />
+            <Entypo name="home" size={size} color={color} />
           ),
         }}
       />
       <Tab.Screen
-        name='FavoriteTab'
+        name="FavoriteTab"
         component={FavoriteStack}
         options={{
           ...navigationSetting,
           headerShown: false,
           tabBarIcon: ({ color, size }) => (
-            <AntDesign name='heart' size={size} color={color} />
-          )
+            <AntDesign name="heart" size={size} color={color} />
+          ),
         }}
       />
       <Tab.Screen
-        name='SettingTab'
+        name="SettingTab"
         component={SettingStack}
         options={{
           ...navigationSetting,
           headerShown: false,
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name='settings-sharp' size={size} color={color} />
-          )
+            <Ionicons name="settings-sharp" size={size} color={color} />
+          ),
         }}
       />
     </Tab.Navigator>
-  )
-}
+  );
+};
 
 const AppNavigator = () => {
-  const { setting, getSetting, isConnected, initNetworkListener, favoriteList, getFavoriteList,
-    thumbList, getThumbList } = useStore()
-  const [maintainInfo, setMaintainInfo] = useState(null)
+  const {
+    setting,
+    getSetting,
+    isConnected,
+    initNetworkListener,
+    favoriteList,
+    getFavoriteList,
+    thumbList,
+    getThumbList,
+  } = useStore();
+  const [maintainInfo, setMaintainInfo] = useState(null);
 
   // 初次載入：取得設定、初始化 SQLite、啟動網路監聽、檢查維護狀態
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
-    getSetting()
+    getSetting();
     const initSql = async () => {
       await sqliteInit();
-      if (!favoriteList) getFavoriteList()
-      if (!thumbList) getThumbList()
-    }
-    initSql()
-    initNetworkListener()
+      if (!favoriteList) getFavoriteList();
+      if (!thumbList) getThumbList();
+    };
+    initSql();
+    initNetworkListener();
 
     // 啟動時檢查維護狀態
     const checkMaintain = async () => {
-      const maintainData = await getMaintainObj()
+      const maintainData = await getMaintainObj();
       if (maintainData?.show) {
-        setMaintainInfo(maintainData)
+        setMaintainInfo(maintainData);
       }
-    }
-    checkMaintain()
-  }, [])
+    };
+    checkMaintain();
+  }, []); // 此 effect 設計為只在掛載時執行一次，Zustand action 引用穩定，可安全省略
 
   // 主題物件使用 useMemo，只在 darkMode 改變時重建
   const paperTheme = useMemo(
-    () => setting?.darkMode ? DARK_THEME : LIGHT_THEME,
-    [setting?.darkMode]
-  )
+    () => (setting?.darkMode ? DARK_THEME : LIGHT_THEME),
+    [setting?.darkMode],
+  );
 
-  if (!setting) return null
+  if (!setting) return null;
 
   return (
     <PaperProvider theme={paperTheme}>
@@ -271,7 +293,7 @@ const AppNavigator = () => {
         <NoNetModal />
       )}
     </PaperProvider>
-  )
-}
+  );
+};
 
-export default AppNavigator
+export default AppNavigator;

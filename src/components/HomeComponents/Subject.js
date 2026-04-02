@@ -1,44 +1,47 @@
-import { useCallback, useEffect, useState } from 'react'
-import { View, FlatList, Alert, StyleSheet } from 'react-native'
-import { ActivityIndicator } from 'react-native-paper'
-import uuid from 'react-native-uuid'
-import { defaultSetting } from '../../constants'
-import SubjectCard from './SubjectCard'
-import { commonStyle } from '../../styles'
-import useStore from '../../store'
+import { useCallback, useEffect, useState } from "react";
+import { View, FlatList, Alert, StyleSheet } from "react-native";
+import { ActivityIndicator } from "react-native-paper";
+import uuid from "react-native-uuid";
+import { defaultSetting } from "../../constants";
+import SubjectCard from "./SubjectCard";
+import { commonStyle } from "../../styles";
+import useStore from "../../store";
 
 /** 主題列表容器 */
 const Subject = ({ navigation }) => {
-  const [subjectList, setSubjectList] = useState([])
-  const [loading, setLoading] = useState(true)
-  const { getCachedSubjects } = useStore()
+  const [subjectList, setSubjectList] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const { getCachedSubjects } = useStore();
 
-  const getSubjectList = useCallback(async (forceRefresh = false) => {
-    try {
-      setLoading(true)
-      const response = await getCachedSubjects(forceRefresh)
-      const result = [...response]
-      // FlatList numColumns=2，不足補位以維持佈局
-      if (result.length % 2 !== 0) {
-        result.push({ id: uuid.v4() })
+  const getSubjectList = useCallback(
+    async (forceRefresh = false) => {
+      try {
+        setLoading(true);
+        const response = await getCachedSubjects(forceRefresh);
+        const result = [...response];
+        // FlatList numColumns=2，不足補位以維持佈局
+        if (result.length % 2 !== 0) {
+          result.push({ id: uuid.v4() });
+        }
+        setSubjectList(result);
+      } catch (err) {
+        Alert.alert(defaultSetting.errMsg);
+        console.error("getSubjectList err: ", err);
+      } finally {
+        setLoading(false);
       }
-      setSubjectList(result)
-    } catch (err) {
-      Alert.alert(defaultSetting.errMsg)
-      console.log('getSubjectList err: ', err)
-    } finally {
-      setLoading(false)
-    }
-  }, [getCachedSubjects])
+    },
+    [getCachedSubjects],
+  );
 
   useEffect(() => {
-    getSubjectList()
-  }, [])
+    getSubjectList();
+  }, []);
 
   return (
     <View style={styles.container}>
       {loading ? (
-        <ActivityIndicator size='large' style={commonStyle.defaultLoading} />
+        <ActivityIndicator size="large" style={commonStyle.defaultLoading} />
       ) : (
         <FlatList
           data={subjectList}
@@ -55,8 +58,8 @@ const Subject = ({ navigation }) => {
         />
       )}
     </View>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -70,6 +73,6 @@ const styles = StyleSheet.create({
   listContent: {
     paddingBottom: 8,
   },
-})
+});
 
-export default Subject
+export default Subject;
