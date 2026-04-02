@@ -148,7 +148,7 @@ const SettingScreen = ({ navigation, route }) => {
         <View style={[styles.card, { backgroundColor: cardBg, borderColor }]}>
           <List.Item
             title={() => <MyText>檢查更新</MyText>}
-            description={() => <MyText style={styles.description}>{version}</MyText>}
+            description={() => <MyText style={styles.description}>v{version}</MyText>}
             left={(props) => <List.Icon {...props} icon="update" color="#6b4faa" />}
             right={() => checking
               ? <ActivityIndicator size={20} style={{ marginRight: 8 }} />
