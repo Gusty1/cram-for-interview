@@ -143,31 +143,4 @@ src/
 5. **防 SQL 注入**: 所有 SQLite 操作使用 `?` 佔位符
 6. **正確的環境變數管理**: `amplifyconfiguration.js` 已正確使用 `EXPO_PUBLIC_`
 7. **網路感知**: NetInfo 全局監聽，無網路時彈出提示
-8. **錯誤邊界**: `ErrorView` 元件提供全局錯誤邊界保護
-
----
-
-## 六、修復歷程摘要
-
-| 日期 | 修復項目 |
-|------|---------|
-| 2026-03-28 | CRITICAL-1：`amplifyconfiguration.json` 從 Git 追蹤移除；API Key 重新產生（舊 key 已失效） |
-| 2026-03-28 | HIGH-3：`Amplify.configure()` 移至模組頂層，確保只初始化一次 |
-| 2026-03-30 | HIGH-1：`getDatabase.js` Race Condition 修復（Promise 快取模式） |
-| 2026-03-30 | HIGH-2：`addUseful` 加入自動重試機制 |
-| 2026-03-30 | HIGH-4：`FavoriteScreen` 改透過 store action 操作 SQLite |
-| 2026-03-30 | HIGH-5：`getFavoriteListData` 加入 try-catch-finally，loading 狀態可靠重置 |
-| 2026-03-30 | HIGH-6：各 `useEffect` 依賴陣列補齊（FavoriteScreen、SubtitleScreen、AppNavigator、QuestionScreen） |
-| 2026-03-30 | HIGH-7：排序持久化操作加上 `.catch()` 錯誤捕獲 |
-| 2026-03-30 | HIGH-8：`cacheStore` 全數改用函數式 `set(state => ...)` |
-| 2026-04-01 | MEDIUM-2：`Sentence.js` 加入 AbortController，防止卸載後 setState |
-| 2026-04-01 | MEDIUM-3：`MaintainModal` useVideoPlayer setup callback 以 useCallback 穩定化 |
-| 2026-04-01 | LOW-1：`console.log` 全數改為 `console.error` |
-| 2026-04-01 | LOW-2：`SubtitleScreen` `JSON.parse` 加入防禦性 try-catch |
-| 2026-04-01 | LOW-3：`filterSubtile` 拼字錯誤修正為 `filterSubtitle`（3 個文件） |
-| 2026-04-01 | LOW-4：`NoNetModal` 加入重試按鈕（NetInfo.refresh） |
-| 2026-04-01 | LOW-5：`QuestionScreen` initialPage fallback，消除頁面切換閃爍 |
-
----
-
-*報告由代碼審查流程生成，最後更新於 2026-04-02*
+8. **錯誤邊界**: `ErrorView` 元件提供全局錯誤邊界保
