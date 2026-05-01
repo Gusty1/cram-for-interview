@@ -1,208 +1,208 @@
 # AGENTS.md — cram-for-interview
 
-> 本文件為 AI 代理（Claude Code 等）提供專案操作指引。
-> 技術棧：React Native 0.81.5 / Expo SDK 54 / React 19.1.0 / Zustand 5
+> This document provides operational guidance for AI agents (Claude Code, etc.) working in this repository.
+> Stack: React Native 0.81.5 / Expo SDK 54 / React 19.1.0 / Zustand 5
 
 ---
 
-## 專案概覽
+## Project Overview
 
-**cram-for-interview** 是一款 Expo 行動應用，提供面試題目刷題功能，支援 Android / iOS。
-資料來源：AWS AppSync (GraphQL) + DynamoDB；本地持久化：expo-sqlite + AsyncStorage。
+**cram-for-interview** is an Expo mobile app for interview preparation (quiz-style flashcards), targeting Android and iOS.
+Data source: AWS AppSync (GraphQL) + DynamoDB. Local persistence: expo-sqlite + AsyncStorage.
 
 ---
 
-## 目錄結構（關鍵路徑）
+## Directory Structure (Key Paths)
 
 ```
 src/
-├── App.js                          # 根組件，Amplify 初始化
-├── amplifyconfiguration.js         # AWS 設定（讀取 EXPO_PUBLIC_* 環境變數）
+├── App.js                          # Root component, Amplify initialization
+├── amplifyconfiguration.js         # AWS config (reads EXPO_PUBLIC_* env vars)
 ├── components/
-│   ├── MyComponents/               # 通用元件（ErrorView, NoNetModal, MaintainModal…）
-│   ├── HomeComponents/             # 首頁元件（Subject, SubtitleList, Sentence…）
-│   ├── Questions/                  # 題目顯示（Questions, QuestionBottomView…）
-│   ├── Favorite/                   # 收藏清單
-│   └── SettingComponents/          # 設定頁元件
+│   ├── MyComponents/               # Shared components (ErrorView, NoNetModal, MaintainModal…)
+│   ├── HomeComponents/             # Home screen components (Subject, SubtitleList, Sentence…)
+│   ├── Questions/                  # Question display (Questions, QuestionBottomView…)
+│   ├── Favorite/                   # Favorites list
+│   └── SettingComponents/          # Settings screen components
 ├── constants/
-│   ├── codeSetting/                # 應用級常數（defaultSetting, navigationSetting…）
-│   └── setting/                    # 使用者設定預設值
+│   ├── codeSetting/                # App-level constants (defaultSetting, navigationSetting…)
+│   └── setting/                    # User settings defaults
 ├── graphql/                        # AppSync queries / mutations / subscriptions
 ├── navigation/
-│   ├── AppNavigator.js             # 底部 Tab 導航
+│   ├── AppNavigator.js             # Bottom tab navigator
 │   └── screens/
 │       ├── HomeScreen/             # SubjectScreen → SubtitleScreen → QuestionScreen
-│       ├── FavoriteScreen/         # 收藏頁
-│       └── SettingScreen/          # 設定頁（含 AddQuestion）
+│       ├── FavoriteScreen/         # Favorites screen
+│       └── SettingScreen/          # Settings screen (includes AddQuestion)
 ├── services/
-│   ├── asyncStorage/               # 使用者設定讀寫
-│   ├── awsDynamoDB/                # GraphQL API 封裝（subject/subtitle/question/maintain）
-│   ├── axios/                      # Imgur 圖片上傳
-│   └── sqlite/                     # 本地 DB（favorite, thumb, SubtitleSort, common）
-├── store/                          # Zustand slices（setting/net/sqlite/answerShow/cache）
-└── styles/                         # 集中樣式模組
+│   ├── asyncStorage/               # User settings read/write
+│   ├── awsDynamoDB/                # GraphQL API wrappers (subject/subtitle/question/maintain)
+│   ├── axios/                      # Imgur image upload
+│   └── sqlite/                     # Local DB (favorite, thumb, SubtitleSort, common)
+├── store/                          # Zustand slices (setting/net/sqlite/answerShow/cache)
+└── styles/                         # Centralized style modules
 ```
 
 ---
 
-## 環境變數
+## Environment Variables
 
-`.env` 需設定以下 `EXPO_PUBLIC_` 前綴變數（參考 `.env.example`）：
+`.env` must define the following `EXPO_PUBLIC_` prefixed variables (see `.env.example`):
 
-| 變數 | 用途 |
-|------|------|
+| Variable | Purpose |
+|----------|---------|
 | `EXPO_PUBLIC_AWS_APPSYNC_ENDPOINT` | AppSync GraphQL endpoint |
 | `EXPO_PUBLIC_AWS_API_KEY` | AppSync API Key |
 | `EXPO_PUBLIC_AWS_REGION` | AWS region |
-| `EXPO_PUBLIC_IMGUR_CLIENT_ID` | Imgur API client id |
+| `EXPO_PUBLIC_IMGUR_CLIENT_ID` | Imgur API client ID |
 
-> **禁止** 在程式碼中硬編碼以上任何值。
+> **Never** hardcode any of the above values in source code.
 
 ---
 
-## 開發指令
+## Development Commands
 
 ```bash
-# 啟動 Metro bundler
+# Start Metro bundler
 npm start
 
-# 指定平台
+# Target specific platform
 npm run android
 npm run ios
 
-# Lint 檢查（含 Prettier）
+# Lint (includes Prettier)
 npx eslint src/
 ```
 
-> 本專案**無測試套件**，沒有 `npm test` 指令。修改時請手動在裝置 / 模擬器上驗證。
+> This project has **no test suite** — there is no `npm test` command. Verify changes manually on a device or simulator.
 
 ---
 
-## 架構約定（修改前必讀）
+## Architecture Conventions (Read Before Modifying)
 
-### 分層規則
+### Layer Rules
 
-| 層 | 目錄 | 職責 |
-|----|------|------|
-| UI | `components/`, `navigation/screens/` | 僅負責渲染與事件 |
-| 狀態 | `store/` | Zustand slices，跨元件共享狀態 |
-| 服務 | `services/` | 所有 IO（網路、DB、AsyncStorage） |
-| 常數 | `constants/` | 不可變設定值 |
+| Layer | Directory | Responsibility |
+|-------|-----------|----------------|
+| UI | `components/`, `navigation/screens/` | Rendering and event handling only |
+| State | `store/` | Zustand slices, cross-component shared state |
+| Service | `services/` | All IO (network, DB, AsyncStorage) |
+| Constants | `constants/` | Immutable configuration values |
 
-**禁止**：在 UI 元件內直接呼叫 `services/`，應透過 Zustand action 或 Screen 層中介。
+**Prohibited**: Calling `services/` directly from UI components. Use Zustand actions or the Screen layer as intermediary.
 
-### 狀態管理
+### State Management
 
-- 全域 store 合併為單一 `useStore`（`src/store/index.js`）
-- 讀取時**務必**使用 selector：`useStore(s => s.xxx)`，避免無謂 re-render
-- 快取策略：`cacheStore` 使用 TTL 5 分鐘，批次查詢避免 N+1
+- All global stores are combined into a single `useStore` (`src/store/index.js`)
+- Always use selectors when reading: `useStore(s => s.xxx)` — avoids unnecessary re-renders
+- Cache strategy: `cacheStore` uses 5-minute TTL, batch queries to avoid N+1
 
 ### SQLite
 
-- 所有 SQLite 操作使用 `?` 佔位符，禁止字串拼接 SQL
-- DB 連線透過 `src/services/sqlite/common/getDatabase.js` 取得 singleton
-- DB 初始化於 `sqliteInit.js`，應用啟動時呼叫一次
+- All SQLite operations must use `?` placeholders — string-concatenated SQL is prohibited
+- Get DB connection via singleton: `src/services/sqlite/common/getDatabase.js`
+- DB is initialized in `sqliteInit.js`, called once at app startup
 
-### 網路感知
+### Network Awareness
 
-- `netStore` 監聽 NetInfo，無網路時顯示 `NoNetModal`
-- 所有 API 呼叫前應確認網路狀態
-
----
-
-## 常見修改場景
-
-### 新增題目欄位
-
-1. 更新 `src/graphql/queries.js` 的 GraphQL query
-2. 更新 `src/services/awsDynamoDB/question/getQuestions.js` 資料映射
-3. 更新 `src/components/Questions/Questions.js` 渲染邏輯
-4. 若需本地持久化，更新 `src/services/sqlite/` 對應操作與 `sqliteInit.js` schema
-
-### 新增 SQLite 資料表
-
-1. 在 `src/services/sqlite/<feature>/` 新增 CRUD 操作檔案
-2. 在 `src/services/sqlite/common/sqliteInit.js` 加入 `CREATE TABLE IF NOT EXISTS`
-3. 在 `src/store/sqliteStore/` 新增對應 slice，匯出至 `src/store/index.js`
-
-### 新增導航頁面
-
-1. 在 `src/navigation/screens/<ScreenName>/index.js` 建立 Screen 元件
-2. 在 `src/navigation/AppNavigator.js` 註冊路由
-3. 若需設定 header，在 `src/constants/codeSetting/navigationSetting.js` 更新
-
-### 修改使用者設定
-
-- 預設值定義：`src/constants/setting/setting.js`
-- 讀寫邏輯：`src/services/asyncStorage/getSettingData.js` / `setSettingData.js`
-- 全域狀態：`src/store/settingStore/settingStore.js`
+- `netStore` listens to NetInfo; shows `NoNetModal` when offline
+- All API calls should check network status first
 
 ---
 
-## 已知限制（勿重複提報）
+## Common Modification Scenarios
 
-| 問題 | 位置 | 說明 | 決策 |
-|------|------|------|------|
-| `EXPO_PUBLIC_*` 金鑰內嵌 bundle | `src/constants/codeSetting/defaultSetting.js` L13 | Expo 框架限制，無法完全迴避 | 接受現狀；Imgur 可設 Referrer 白名單，AppSync 後續可評估 Cognito Identity Pool 取代 API Key |
-| Zustand 訂閱粒度粗糙 | `src/store/index.js` | 6 slice 合為單一 `useStore`，任何 slice 更新都會通知所有訂閱者；拆分為破壞性重構，ROI 過低 | 接受現狀；關鍵路徑已用 `useStore(s => s.xxx)` selector |
-| GraphQL 缺分頁 | `src/services/awsDynamoDB/question/getQuestions.js` | 現有資料量遠低於 AppSync 1000 筆上限 | 待單一子類目題目數逼近 500 筆時加入 `nextToken` 迭代邏輯 |
-| `maintainID` 硬編碼 UUID | `src/constants/codeSetting/defaultSetting.js` L17 | 穩定值，Remote Config 成本過高 | 接受現狀；若需修改可改以 `EXPO_PUBLIC_` 環境變數提供 |
-| 個人 Email 硬編碼 | `src/constants/codeSetting/emailInfo.js` L2 | Bug 回報功能設計意圖，個人開源專案明確公開合理 | 接受現狀，無需修改 |
+### Add a Question Field
 
----
+1. Update the GraphQL query in `src/graphql/queries.js`
+2. Update data mapping in `src/services/awsDynamoDB/question/getQuestions.js`
+3. Update render logic in `src/components/Questions/Questions.js`
+4. If local persistence is needed, update `src/services/sqlite/` operations and `sqliteInit.js` schema
 
-## 架構評估
+### Add a SQLite Table
 
-### 正確做法（保持）
+1. Add CRUD operation files under `src/services/sqlite/<feature>/`
+2. Add `CREATE TABLE IF NOT EXISTS` to `src/services/sqlite/common/sqliteInit.js`
+3. Add a corresponding slice in `src/store/sqliteStore/`, export it from `src/store/index.js`
 
-| 面向 | 評估 |
-|------|------|
-| 服務層與 UI 分離 | `services/` 正確封裝所有資料存取，與 UI 元件解耦 |
-| 狀態集中管理 | Zustand store 依功能切分為多個 slice，條理清晰 |
-| 頁面與元件分離 | `navigation/screens/` 放頁面邏輯，`components/` 放可重用元件 |
-| 檔案粒度 | 大多數檔案維持在 50–200 行，高內聚低耦合 |
-| 環境變數管理 | `amplifyconfiguration.js` 正確讀取 `EXPO_PUBLIC_` 環境變數 |
+### Add a Navigation Screen
 
-### 架構優點
+1. Create the screen component at `src/navigation/screens/<ScreenName>/index.js`
+2. Register the route in `src/navigation/AppNavigator.js`
+3. If a custom header is needed, update `src/constants/codeSetting/navigationSetting.js`
 
-1. **批次查詢優化**：`getCachedQuestionsBatch` 有效解決 N+1 問題
-2. **TTL 快取機制**：5 分鐘 TTL 快取減少不必要的 API 呼叫
-3. **分層清晰**：services / store / components / navigation 職責劃分明確
-4. **廣泛的效能優化**：多數元件正確使用 `React.memo`、`useMemo`、`useCallback`
-5. **防 SQL 注入**：所有 SQLite 操作使用 `?` 佔位符
-6. **正確的環境變數管理**：`amplifyconfiguration.js` 已正確使用 `EXPO_PUBLIC_`
-7. **網路感知**：NetInfo 全局監聽，無網路時彈出提示
-8. **錯誤邊界**：`ErrorView` 元件提供全局錯誤邊界保護
+### Modify User Settings
+
+- Default values: `src/constants/setting/setting.js`
+- Read/write logic: `src/services/asyncStorage/getSettingData.js` / `setSettingData.js`
+- Global state: `src/store/settingStore/settingStore.js`
 
 ---
 
-## 相依性版本
+## Known Limitations (Do Not Re-Report)
 
-| 套件 | 版本 | 備註 |
-|------|------|------|
-| `react` | `19.1.0` | 最新穩定版 |
-| `react-native` | `0.81.5` | New Arch 已啟用 |
-| `expo` | `^54.0.0` | 目前穩定版 |
-| `zustand` | `^5.0.11` | v5 最新穩定版 |
-| `@react-navigation/*` | `^7.x` | v7 最新版 |
-| `react-native-reanimated` | `4.1.1` | v4 最新版 |
-| `aws-amplify` | `^6.16.2` | v6 穩定版 |
-| `react-native-worklets` | `0.5.1` | reanimated v4 配對依賴，升版時須確認相容性矩陣 |
-| `eslint` | `^8.57.1` | v9 已發布，可考慮升級 |
-| `react-native-draglist` | `^3.10.0` | 非主流套件，需持續追蹤維護狀態 |
+| Issue | Location | Notes | Decision |
+|-------|----------|-------|----------|
+| `EXPO_PUBLIC_*` keys embedded in bundle | `src/constants/codeSetting/defaultSetting.js` L13 | Expo framework constraint; unavoidable | Accept as-is; Imgur can use Referrer allowlist; AppSync can consider Cognito Identity Pool to replace API Key |
+| Coarse Zustand subscription granularity | `src/store/index.js` | 6 slices merged into single `useStore`; any slice update notifies all subscribers; splitting is a breaking refactor with low ROI | Accept as-is; critical paths already use `useStore(s => s.xxx)` selectors |
+| GraphQL lacks pagination | `src/services/awsDynamoDB/question/getQuestions.js` | Current data volume is well below AppSync's 1000-item limit | Add `nextToken` iteration logic when any subtitle approaches 500 items |
+| `maintainID` hardcoded UUID | `src/constants/codeSetting/defaultSetting.js` L17 | Stable value; Remote Config cost not justified | Accept as-is; can switch to `EXPO_PUBLIC_` env var if change is needed |
+| Personal email hardcoded | `src/constants/codeSetting/emailInfo.js` L2 | Intentional design for bug report feature; acceptable in a personal open-source project | Accept as-is; no action needed |
 
 ---
 
-## 禁止事項
+## Architecture Evaluation
 
-- 不得在 `src/` 中存放 `.env` 或任何明文金鑰
-- 不得在元件層直接操作 SQLite 或 AsyncStorage
-- 不得移除 `react-native-error-boundary` 的 `ErrorView` 包裝
-- 不得在沒有確認 `netStore` 狀態的情況下直接發送 API 請求
-- SQL 語句禁止字串拼接，一律用 `?` 佔位符
+### What Is Working Well (Preserve)
+
+| Aspect | Assessment |
+|--------|------------|
+| Service layer / UI separation | `services/` correctly encapsulates all data access, decoupled from UI components |
+| Centralized state management | Zustand store split into feature-based slices, well-organized |
+| Screen / component separation | `navigation/screens/` holds page logic; `components/` holds reusable components |
+| File granularity | Most files stay within 50–200 lines; high cohesion, low coupling |
+| Environment variable management | `amplifyconfiguration.js` correctly reads `EXPO_PUBLIC_` env vars |
+
+### Architecture Strengths
+
+1. **Batch query optimization**: `getCachedQuestionsBatch` effectively solves the N+1 problem
+2. **TTL caching**: 5-minute TTL cache reduces unnecessary API calls
+3. **Clear layering**: services / store / components / navigation have well-defined responsibilities
+4. **Broad performance optimization**: Most components correctly use `React.memo`, `useMemo`, `useCallback`
+5. **SQL injection prevention**: All SQLite operations use `?` placeholders
+6. **Correct env var management**: `amplifyconfiguration.js` uses `EXPO_PUBLIC_` correctly
+7. **Network awareness**: NetInfo global listener shows a prompt when offline
+8. **Error boundaries**: `ErrorView` component provides global error boundary protection
 
 ---
 
-## 技術債追蹤
+## Dependency Versions
 
-新發現的問題請直接更新本文件的「已知限制」章節，或新增獨立的 issue。
+| Package | Version | Notes |
+|---------|---------|-------|
+| `react` | `19.1.0` | Latest stable |
+| `react-native` | `0.81.5` | New Architecture enabled |
+| `expo` | `^54.0.0` | Current stable |
+| `zustand` | `^5.0.11` | v5 latest stable |
+| `@react-navigation/*` | `^7.x` | v7 latest |
+| `react-native-reanimated` | `4.1.1` | v4 latest |
+| `aws-amplify` | `^6.16.2` | v6 stable |
+| `react-native-worklets` | `0.5.1` | Paired dependency for reanimated v4; verify compatibility matrix on upgrade |
+| `eslint` | `^8.57.1` | v9 is available; consider upgrading |
+| `react-native-draglist` | `^3.10.0` | Non-mainstream package; monitor maintenance status |
+
+---
+
+## Prohibited Actions
+
+- Do not store `.env` or any plaintext credentials inside `src/`
+- Do not access SQLite or AsyncStorage directly from component layer
+- Do not remove the `ErrorView` wrapper from `react-native-error-boundary`
+- Do not issue API requests without checking `netStore` network status first
+- SQL statements must never use string concatenation — always use `?` placeholders
+
+---
+
+## Technical Debt Tracking
+
+For newly discovered issues, update the "Known Limitations" section in this document or open a dedicated issue.
